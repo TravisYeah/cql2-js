@@ -3,5 +3,17 @@
   "version": "0.1.0",
   "main": "index.js",
   "author": "Travis Harrison",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "jest --watch"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.8",
+    "@babel/preset-env": "^7.25.8",
+    "@babel/preset-typescript": "^7.25.7",
+    "babel-jest": "^29.7.0"
+  },
+  "dependencies": {
+    "@types/jest": "^29.5.13"
+  }
 }
