@@ -8,15 +8,23 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "build": "tsc index.ts",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@babel/core": "^7.25.8",
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-typescript": "^7.25.7",
-    "babel-jest": "^29.7.0"
+    "babel-jest": "^29.7.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3"
   },
   "dependencies": {
     "@types/jest": "^29.5.13"
+  },
+  "lint-staged": {
+    "src/*": "prettier --write",
+    "tests/*": "prettier --write"
   }
 }
