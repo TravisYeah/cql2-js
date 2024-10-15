@@ -21,4 +21,6 @@ export class Token {
   }
 }
 
-export enum TokenType {}
+export enum TokenType {
+  EOF = "EOF",
+}
