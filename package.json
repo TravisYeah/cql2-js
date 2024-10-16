@@ -8,7 +8,7 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "build": "tsc index.ts",
-    "test": "jest",
+    "test": "jest --watch",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -24,7 +24,7 @@
     "@types/jest": "^29.5.13"
   },
   "lint-staged": {
-    "src/*": "prettier --write",
-    "tests/*": "prettier --write"
+    "src/*.ts": "prettier --write",
+    "tests/*.ts": "prettier --write"
   }
 }
