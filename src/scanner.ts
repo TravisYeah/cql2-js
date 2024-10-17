@@ -37,6 +37,17 @@ export class Scanner {
       case ")":
         this.addToken(TokenType.RightParen);
         break;
+      case "=":
+        this.addToken(TokenType.Equal);
+        break;
+      case "<":
+        this.addToken(this.match("=") ? TokenType.LessEqual : TokenType.Less);
+        break;
+      case ">":
+        this.addToken(
+          this.match("=") ? TokenType.GreaterEqual : TokenType.Greater,
+        );
+        break;
       default:
         this.error(this.line, `Unexpected character: ${c}`);
         break;
