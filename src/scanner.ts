@@ -48,6 +48,9 @@ export class Scanner {
           this.match("=") ? TokenType.GreaterEqual : TokenType.Greater,
         );
         break;
+      case ",":
+        this.addToken(TokenType.Comma);
+        break;
       default:
         this.error(this.line, `Unexpected character: ${c}`);
         break;

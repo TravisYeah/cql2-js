@@ -23,4 +23,12 @@ export class Token {
 
 export enum TokenType {
   EOF = "EOF",
+  LeftParen = "LeftParen",
+  RightParen = "RightParen",
+  Equal = "Equal",
+  LessEqual = "LessEqual",
+  Less = "Less",
+  GreaterEqual = "GreaterEqual",
+  Greater = "Greater",
+  Comma = "Comma",
 }

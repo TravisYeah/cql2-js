@@ -74,4 +74,13 @@ describe("scanner", () => {
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
+
+  test("Comma", async () => {
+    const scanner = new Scanner(",", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Comma, ",", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
 });
