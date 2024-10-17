@@ -31,6 +31,12 @@ export class Scanner {
   scanToken() {
     const c = this.advance();
     switch (c) {
+      case "(":
+        this.addToken(TokenType.LeftParen);
+        break;
+      case ")":
+        this.addToken(TokenType.RightParen);
+        break;
       default:
         this.error(this.line, `Unexpected character: ${c}`);
         break;

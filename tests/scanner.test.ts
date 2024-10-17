@@ -11,4 +11,22 @@ describe("scanner", () => {
     const tokens = scanner.scanTokens();
     expect(tokens).toEqual([new Token(TokenType.EOF, "", null, 1)]);
   });
+
+  test("LeftParen", async () => {
+    const scanner = new Scanner("(", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.LeftParen, "(", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("RightParen", async () => {
+    const scanner = new Scanner(")", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.RightParen, ")", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
 });
