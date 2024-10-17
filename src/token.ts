@@ -31,4 +31,5 @@ export enum TokenType {
   GreaterEqual = "GreaterEqual",
   Greater = "Greater",
   Comma = "Comma",
+  String = "String",
 }
