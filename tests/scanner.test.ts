@@ -1,3 +1,4 @@
+import { CqlSyntaxError } from "../src/exceptions";
 import { Scanner } from "../src/scanner";
 import { Token, TokenType } from "../src/token";
 
@@ -82,5 +83,30 @@ describe("scanner", () => {
       new Token(TokenType.Comma, ",", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
+  });
+
+  test("String", async () => {
+    const scanner = new Scanner("'test'", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.String, "'test'", "test", 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("String - empty", async () => {
+    const scanner = new Scanner("''", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.String, "''", "", 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("String - unterminated string", async () => {
+    const scanner = new Scanner("'test", logger);
+    expect(() => scanner.scanTokens()).toThrow(
+      new CqlSyntaxError("Unterminated string", 1),
+    );
   });
 });
