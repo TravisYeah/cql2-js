@@ -56,9 +56,28 @@ export class Scanner {
         this.string();
         break;
       default:
+        if (this.isDigit(c)) {
+          this.number();
+        }
         this.error(this.line, `Unexpected character: ${c}`);
         break;
     }
+  }
+
+  private number() {
+    while (this.isDigit(this.peek())) {
+      this.advance();
+    }
+
+    if (this.peek() === "." && this.isDigit(this.peekNext())) {
+      this.advance();
+      while (this.isDigit(this.peek())) {
+        this.advance();
+      }
+    }
+
+    const value = parseFloat(this.source.substring(this.start, this.current));
+    this.addToken(TokenType.Numeric, value);
   }
 
   private string(): void {
