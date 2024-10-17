@@ -127,4 +127,13 @@ describe("scanner", () => {
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
+
+  test("Identifier", async () => {
+    const scanner = new Scanner("test", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Identifier, "test", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
 });

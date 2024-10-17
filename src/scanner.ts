@@ -59,9 +59,39 @@ export class Scanner {
         if (this.isDigit(c)) {
           this.number();
         }
+        if (this.isIdentifierStart(c)) {
+          this.identifier();
+        }
         this.error(this.line, `Unexpected character: ${c}`);
         break;
     }
+  }
+
+  private identifier(): void {
+    while (this.isIdentifierPart(this.peek())) {
+      this.advance();
+    }
+    const text = this.source.substring(this.start, this.current);
+
+    const keyword = this.keywords.get(text);
+    if (keyword) {
+      this.addToken(keyword);
+      return;
+    }
+
+    this.addToken(TokenType.Identifier);
+  }
+
+  private isIdentifierPart(c: string): boolean {
+    const code = c.charCodeAt(0);
+    // prettier-ignore
+    return (
+      this.isIdentifierStart(c) ||
+      c === "." ||                            // "\x002E"
+      this.isDigit(c) ||
+      (code >= 0x0300 && code <= 0x036f) ||   // combining and diacritical marks
+      (code >= 0x203f && code <= 0x2040)      // ‿ and ⁀
+    );
   }
 
   private number() {
@@ -101,6 +131,29 @@ export class Scanner {
     }
 
     this.addToken(TokenType.String, value);
+  }
+
+  private isIdentifierStart(c: string): boolean {
+    const code = c.charCodeAt(0);
+    // prettier-ignore
+    return (
+      code === 0x003A ||                       // colon
+      code === 0x005F ||                       // underscore
+      (code >= 0x0041 && code <= 0x005A) ||    // A-Z
+      (code >= 0x0061 && code <= 0x007A) ||    // a-z
+      (code >= 0x00C0 && code <= 0x00D6) ||    // À-Ö Latin-1 Supplement Letters
+      (code >= 0x00D8 && code <= 0x00F6) ||    // Ø-ö Latin-1 Supplement Letters
+      (code >= 0x00F8 && code <= 0x02FF) ||    // ø-ÿ Latin-1 Supplement Letters
+      (code >= 0x0370 && code <= 0x037D) ||    // Ͱ-ͽ Greek and Coptic (without ";")
+      (code >= 0x037F && code <= 0x1FFE) ||    // See note 1.
+      (code >= 0x200C && code <= 0x200D) ||    // zero width non-joiner and joiner
+      (code >= 0x2070 && code <= 0x218F) ||    // See note 2.
+      (code >= 0x2C00 && code <= 0x2FEF) ||    // See note 3.
+      (code >= 0x3001 && code <= 0xD7FF) ||    // See note 4.
+      (code >= 0xF900 && code <= 0xFDCF) ||    // See note 5.
+      (code >= 0xFDF0 && code <= 0xFFFD) ||    // See note 6.
+      (code >= 0x10000 && code <= 0xEFFFF)     // See note 7.
+    )
   }
 
   private isCharacter(c: string) {
