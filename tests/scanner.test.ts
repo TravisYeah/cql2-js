@@ -6,7 +6,7 @@ function logger(line: number, message: string) {
 }
 
 describe("scanner", () => {
-  test("read empty source", async () => {
+  test("EOF", async () => {
     const scanner = new Scanner("", logger);
     const tokens = scanner.scanTokens();
     expect(tokens).toEqual([new Token(TokenType.EOF, "", null, 1)]);
