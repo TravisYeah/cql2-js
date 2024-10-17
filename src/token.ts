@@ -23,5 +23,4 @@ export class Token {
 
 export enum TokenType {
   EOF = "EOF",
-  DIGIT = "DIGIT",
 }

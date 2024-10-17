@@ -32,27 +32,9 @@ export class Scanner {
     const c = this.advance();
     switch (c) {
       default:
-        if (this.isDigit(c)) {
-          this.number();
-        }
         this.error(this.line, `Unexpected character: ${c}`);
         break;
     }
-  }
-
-  number() {
-    while (this.isDigit(this.peek())) {
-      this.advance();
-    }
-
-    this.addToken(
-      TokenType.DIGIT,
-      parseFloat(this.source.substring(this.start, this.current)),
-    );
-  }
-
-  isDigit(c: string) {
-    return c >= "0" && c <= "9";
   }
 
   peekNext(): string {
