@@ -42,4 +42,7 @@ export enum TokenType {
   Slash = "Slash",
   Modulus = "Modulus",
   Div = "Div",
+  Caret = "Caret",
+  True = "True",
+  False = "False",
 }
