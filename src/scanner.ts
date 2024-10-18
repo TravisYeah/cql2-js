@@ -55,15 +55,27 @@ export class Scanner {
       case "'":
         this.string();
         break;
+      case "\\":
+        this.escaped();
+        break;
       default:
         if (this.isDigit(c)) {
           this.number();
-        }
-        if (this.isIdentifierStart(c)) {
+        } else if (this.isIdentifierStart(c)) {
           this.identifier();
+        } else {
+          this.error(this.line, `Unexpected character: ${c}`);
         }
+    }
+  }
+
+  private escaped(): void {
+    const c = this.advance();
+    switch (c) {
+      case "'":
+        this.string();
+      default:
         this.error(this.line, `Unexpected character: ${c}`);
-        break;
     }
   }
 
@@ -113,14 +125,13 @@ export class Scanner {
   private string(): void {
     let value = "";
     while (true) {
-      if (this.isCharacter(this.peek())) {
+      if (this.isEscapeQuote(this.peek(), this.peekNext())) {
+        this.advance();
         value += this.advance();
         continue;
       }
-      if (this.isEscapeQuote(this.peek(), this.peekNext())) {
-        this.advance();
-        this.advance();
-        value += "'";
+      if (this.isCharacter(this.peek())) {
+        value += this.advance();
         continue;
       }
       if (this.peek() === "'") {

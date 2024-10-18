@@ -110,6 +110,24 @@ describe("scanner", () => {
     );
   });
 
+  test("String - backslash escaped quote", async () => {
+    const scanner = new Scanner("'te\\'st'", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.String, "'te\\'st'", "te'st", 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("String - two quote escaped quote", async () => {
+    const scanner = new Scanner("'te''st'", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.String, "'te''st'", "te'st", 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
   test("Numeric - 1", async () => {
     const scanner = new Scanner("1", logger);
     const tokens = scanner.scanTokens();
