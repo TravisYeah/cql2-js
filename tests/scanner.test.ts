@@ -175,6 +175,17 @@ describe("scanner", () => {
     expect(tokens[1]).toEqual(new Token(TokenType.EOF, "", null, 1));
   });
 
+  test("Numeric - 10E-2", async () => {
+    const scanner = new Scanner("10E-2", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toHaveLength(2);
+    expect(tokens[0].tokenType === TokenType.Numeric).toBeTruthy();
+    expect(tokens[0].lexeme === "10E-2").toBeTruthy();
+    expect(tokens[0].literal === 0.01).toBeTruthy();
+    expect(tokens[0].line === 1).toBeTruthy();
+    expect(tokens[1]).toEqual(new Token(TokenType.EOF, "", null, 1));
+  });
+
   test("Identifier", async () => {
     const scanner = new Scanner("test", logger);
     const tokens = scanner.scanTokens();

@@ -141,12 +141,23 @@ export class Scanner {
     this.advance();
 
     const exponentStart = this.current;
+
+    const sign = this.peek();
+    const isSigned = ["+", "-"].includes(sign);
+    if (isSigned) {
+      this.advance();
+    }
+
     while (this.isDigit(this.peek())) {
       this.advance();
     }
     const exponent = BigInt(this.source.substring(exponentStart, this.current));
 
-    const value = mantissa ** exponent;
+    // BigInt cannot have negative exponents
+    const value =
+      sign === "-"
+        ? Number(mantissa) ** Number(exponent)
+        : mantissa ** exponent;
     this.addToken(TokenType.Numeric, value);
   }
 
