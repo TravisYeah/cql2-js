@@ -75,7 +75,7 @@ export class Scanner {
       case "'":
         this.string();
       default:
-        this.error(this.line, `Unexpected character: ${c}`);
+        this.error(this.line, `Unexpected escaped character: ${c}`);
     }
   }
 
