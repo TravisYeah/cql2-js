@@ -223,4 +223,22 @@ describe("scanner", () => {
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
+
+  test("Star", async () => {
+    const scanner = new Scanner("*", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Star, "*", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("Slash", async () => {
+    const scanner = new Scanner("/", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Slash, "/", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
 });

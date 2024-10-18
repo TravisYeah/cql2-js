@@ -67,6 +67,12 @@ export class Scanner {
       case '"':
         this.addToken(TokenType.DoubleQuote);
         break;
+      case "*":
+        this.addToken(TokenType.Star);
+        break;
+      case "/":
+        this.addToken(TokenType.Slash);
+        break;
       default:
         if (this.isDigit(c)) {
           this.number();
