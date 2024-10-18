@@ -73,6 +73,9 @@ export class Scanner {
       case "/":
         this.addToken(TokenType.Slash);
         break;
+      case "%":
+        this.addToken(TokenType.Modulus);
+        break;
       default:
         if (this.isDigit(c)) {
           this.number();
