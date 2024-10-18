@@ -278,6 +278,15 @@ describe("scanner", () => {
     ]);
   });
 
+  test("true", async () => {
+    const scanner = new Scanner("true", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.True, "true", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
   test("FALSE", async () => {
     const scanner = new Scanner("FALSE", logger);
     const tokens = scanner.scanTokens();

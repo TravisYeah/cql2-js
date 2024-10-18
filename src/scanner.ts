@@ -9,7 +9,7 @@ export class Scanner {
   line = 1;
   error: (line: number, message: string) => void;
   keywords = new Map<string, TokenType>([
-    ["div", TokenType.Div],
+    ["DIV", TokenType.Div],
     ["TRUE", TokenType.True],
     ["FALSE", TokenType.False],
   ]);
@@ -110,7 +110,7 @@ export class Scanner {
     }
     const text = this.source.substring(this.start, this.current);
 
-    const keyword = this.keywords.get(text);
+    const keyword = this.keywords.get(text.toUpperCase());
     if (keyword) {
       this.addToken(keyword);
       return;
