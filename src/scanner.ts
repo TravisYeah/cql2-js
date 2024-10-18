@@ -115,9 +115,14 @@ export class Scanner {
     );
   }
 
-  private number() {
+  private number(): void {
     while (this.isDigit(this.peek())) {
       this.advance();
+    }
+
+    if (this.isScientific()) {
+      this.scientific();
+      return;
     }
 
     if (this.peek() === "." && this.isDigit(this.peekNext())) {
@@ -129,6 +134,28 @@ export class Scanner {
 
     const value = parseFloat(this.source.substring(this.start, this.current));
     this.addToken(TokenType.Numeric, value);
+  }
+
+  private scientific() {
+    const mantissa = BigInt(this.source.substring(this.start, this.current));
+    this.advance();
+
+    const exponentStart = this.current;
+    while (this.isDigit(this.peek())) {
+      this.advance();
+    }
+    const exponent = BigInt(this.source.substring(exponentStart, this.current));
+
+    const value = mantissa ** exponent;
+    this.addToken(TokenType.Numeric, value);
+  }
+
+  private isScientific() {
+    let isPotentiallyScientific = this.peek() === "E";
+    const signedDigit =
+      ["+", "-"].includes(this.peekNext()) && this.isDigit(this.peekNextNext());
+    const unsignedSignedDigit = this.isDigit(this.peekNext());
+    return isPotentiallyScientific && (signedDigit || unsignedSignedDigit);
   }
 
   private string(): void {
@@ -247,6 +274,14 @@ export class Scanner {
     }
 
     return this.source.charAt(this.current + 1);
+  }
+
+  peekNextNext(): string {
+    if (this.current + 2 >= this.source.length) {
+      return "\0";
+    }
+
+    return this.source.charAt(this.current + 2);
   }
 
   peek(): string {
