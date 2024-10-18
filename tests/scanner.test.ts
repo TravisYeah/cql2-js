@@ -155,10 +155,30 @@ describe("scanner", () => {
     ]);
   });
 
+  test("Numeric - -1", async () => {
+    const scanner = new Scanner("-1", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Minus, "-", null, 1),
+      new Token(TokenType.Numeric, "1", 1, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
   test("Numeric - 1.2", async () => {
     const scanner = new Scanner("1.2", logger);
     const tokens = scanner.scanTokens();
     expect(tokens).toEqual([
+      new Token(TokenType.Numeric, "1.2", 1.2, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("Numeric - -1.2", async () => {
+    const scanner = new Scanner("-1.2", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Minus, "-", null, 1),
       new Token(TokenType.Numeric, "1.2", 1.2, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
