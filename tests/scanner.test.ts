@@ -31,6 +31,24 @@ describe("scanner", () => {
     ]);
   });
 
+  test("Plus", async () => {
+    const scanner = new Scanner("+", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Plus, "+", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("Minus", async () => {
+    const scanner = new Scanner("-", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Minus, "-", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
   test("Equal", async () => {
     const scanner = new Scanner("=", logger);
     const tokens = scanner.scanTokens();

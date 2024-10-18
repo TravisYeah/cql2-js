@@ -35,6 +35,12 @@ export class Scanner {
       case "(":
         this.addToken(TokenType.LeftParen);
         break;
+      case "+":
+        this.addToken(TokenType.Plus);
+        break;
+      case "-":
+        this.addToken(TokenType.Minus);
+        break;
       case ")":
         this.addToken(TokenType.RightParen);
         break;
