@@ -8,7 +8,7 @@ export class Scanner {
   current = 0;
   line = 1;
   error: (line: number, message: string) => void;
-  keywords = new Map<string, TokenType>([]);
+  keywords = new Map<string, TokenType>([["div", TokenType.Div]]);
 
   constructor(source: string, error: (line: number, message: string) => void) {
     this.source = source;

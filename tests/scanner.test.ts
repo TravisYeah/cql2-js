@@ -250,4 +250,13 @@ describe("scanner", () => {
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
+
+  test("div", async () => {
+    const scanner = new Scanner("div", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Modulus, "div", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
 });
