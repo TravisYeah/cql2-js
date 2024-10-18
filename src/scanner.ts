@@ -58,6 +58,9 @@ export class Scanner {
       case "\\":
         this.escaped();
         break;
+      case '"':
+        this.addToken(TokenType.DoubleQuote);
+        break;
       default:
         if (this.isDigit(c)) {
           this.number();
