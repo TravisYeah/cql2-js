@@ -76,6 +76,9 @@ export class Scanner {
       case "%":
         this.addToken(TokenType.Modulus);
         break;
+      case "^":
+        this.addToken(TokenType.Caret);
+        break;
       default:
         if (this.isDigit(c)) {
           this.number();
