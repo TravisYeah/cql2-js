@@ -9,7 +9,6 @@ export class Scanner {
   line = 1;
   error: (line: number, message: string) => void;
   keywords = new Map<string, TokenType>([
-    ["DIV", TokenType.Div],
     ["TRUE", TokenType.True],
     ["FALSE", TokenType.False],
   ]);
