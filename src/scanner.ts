@@ -9,6 +9,9 @@ export class Scanner {
   line = 1;
   error: (line: number, message: string) => void;
   keywords = new Map<string, TokenType>([
+    ["AND", TokenType.And],
+    ["OR", TokenType.Or],
+    ["NOT", TokenType.Not],
     ["TRUE", TokenType.True],
     ["FALSE", TokenType.False],
   ]);

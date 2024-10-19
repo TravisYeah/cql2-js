@@ -286,4 +286,31 @@ describe("scanner", () => {
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
+
+  test("AND", async () => {
+    const scanner = new Scanner("AND", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.And, "AND", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("OR", async () => {
+    const scanner = new Scanner("OR", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Or, "OR", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("NOT", async () => {
+    const scanner = new Scanner("NOT", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.Not, "NOT", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
 });

@@ -45,4 +45,7 @@ export enum TokenType {
   Caret = "Caret",
   True = "True",
   False = "False",
+  Date = "Date",
+  Not = "Not",
+  Or = "Or",
 }
