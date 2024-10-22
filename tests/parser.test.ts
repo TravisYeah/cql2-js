@@ -58,4 +58,12 @@ describe("scanner", () => {
     const expressions = parser.parse();
     expect(expressions).toStrictEqual([new LiteralExpression(100n)]);
   });
+
+  test("string", async () => {
+    const scanner = new Scanner("'test'", logger);
+    const tokens = scanner.scanTokens();
+    const parser = new Parser(tokens, reporter);
+    const expressions = parser.parse();
+    expect(expressions).toStrictEqual([new LiteralExpression("test")]);
+  });
 });
