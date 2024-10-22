@@ -1,4 +1,4 @@
-import { BooleanExpression } from "./ast";
+import { Expression, LiteralExpression } from "./ast";
 import { Token, TokenType } from "./token";
 import { CqlSyntaxError } from "./exceptions";
 
@@ -14,8 +14,8 @@ export class Parser {
     this.report = error;
   }
 
-  parse(): BooleanExpression[] {
-    const exressions: BooleanExpression[] = [];
+  parse(): Expression[] {
+    const exressions: Expression[] = [];
     while (!this.isAtEnd()) {
       try {
         exressions.push(this.booleanExpression());
@@ -27,8 +27,18 @@ export class Parser {
     return exressions;
   }
 
-  private booleanExpression(): BooleanExpression {
-    throw new Error("Method not implemented.");
+  private booleanExpression(): Expression {
+    return this.primary();
+  }
+
+  private primary(): Expression {
+    if (this.match(TokenType.True)) {
+      return new LiteralExpression(true);
+    } else if (this.match(TokenType.False)) {
+      return new LiteralExpression(false);
+    }
+
+    throw this.error(this.peek(), "Expect expression");
   }
 
   private isAtEnd(): boolean {
