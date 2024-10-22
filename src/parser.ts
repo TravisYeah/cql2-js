@@ -36,6 +36,8 @@ export class Parser {
       return new LiteralExpression(true);
     } else if (this.match(TokenType.False)) {
       return new LiteralExpression(false);
+    } else if (this.match(TokenType.Numeric)) {
+      return new LiteralExpression(this.previous().literal);
     }
 
     throw this.error(this.peek(), "Expect expression");
