@@ -25,6 +25,7 @@ export enum TokenType {
   EOF = "EOF",
   LeftParen = "LeftParen",
   RightParen = "RightParen",
+  NotEqual = "NotEqual",
   Equal = "Equal",
   LessEqual = "LessEqual",
   Less = "Less",

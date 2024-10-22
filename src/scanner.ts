@@ -54,7 +54,15 @@ export class Scanner {
         this.addToken(TokenType.Equal);
         break;
       case "<":
-        this.addToken(this.match("=") ? TokenType.LessEqual : TokenType.Less);
+        if (this.match("=")) {
+          this.addToken(TokenType.LessEqual);
+          this.advance();
+        } else if (this.match(">")) {
+          this.addToken(TokenType.NotEqual);
+          this.advance();
+        } else {
+          this.addToken(TokenType.Less);
+        }
         break;
       case ">":
         this.addToken(

@@ -58,6 +58,15 @@ describe("scanner", () => {
     ]);
   });
 
+  test("NotEqual", async () => {
+    const scanner = new Scanner("<>", logger);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([
+      new Token(TokenType.NotEqual, "<>", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
   test("Greater", async () => {
     const scanner = new Scanner(">", logger);
     const tokens = scanner.scanTokens();
