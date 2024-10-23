@@ -126,7 +126,7 @@ export class Scanner {
       return;
     }
 
-    this.addToken(TokenType.Identifier);
+    this.addToken(TokenType.Identifier, text);
   }
 
   private isIdentifierPart(c: string): boolean {

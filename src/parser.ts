@@ -1,4 +1,4 @@
-import { Expression, LiteralExpression } from "./ast";
+import { Expression, LiteralExpression, PropertyNameExpression } from "./ast";
 import { Token, TokenType } from "./token";
 import { CqlSyntaxError } from "./exceptions";
 
@@ -40,9 +40,38 @@ export class Parser {
       return new LiteralExpression(this.previous().literal);
     } else if (this.match(TokenType.String)) {
       return new LiteralExpression(this.previous().literal);
+    } else if (
+      this.check(TokenType.Identifier) ||
+      this.check(TokenType.DoubleQuote)
+    ) {
+      return this.propertyName();
     }
 
-    throw this.error(this.peek(), "Expect expression");
+    throw this.error(
+      this.peek(),
+      `Expected expression but received ${this.peek()}`,
+    );
+  }
+
+  private propertyName(): Expression {
+    if (this.match(TokenType.Identifier)) {
+      return new PropertyNameExpression(this.previous().literal);
+    }
+    if (this.match(TokenType.DoubleQuote) && this.match(TokenType.Identifier)) {
+      const expr = new PropertyNameExpression(this.previous().literal);
+      if (!this.match(TokenType.DoubleQuote)) {
+        throw this.error(
+          this.peek(),
+          `Expected closing double quote but received ${this.peek()}`,
+        );
+      }
+      return expr;
+    }
+
+    throw this.error(
+      this.peek(),
+      `Expected identifier but received ${this.peek()}`,
+    );
   }
 
   private isAtEnd(): boolean {
@@ -93,7 +122,7 @@ export class Parser {
   private error(token: Token, message: string): SyntaxError {
     return token.tokenType === TokenType.EOF
       ? new CqlSyntaxError(message, token.line, "EOF")
-      : new CqlSyntaxError(message, token.line, `"${token.lexeme}"`);
+      : new CqlSyntaxError(message, token.line, token.lexeme);
   }
 
   private synchronize() {

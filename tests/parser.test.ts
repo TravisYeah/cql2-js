@@ -1,4 +1,4 @@
-import { LiteralExpression } from "../src/ast";
+import { LiteralExpression, PropertyNameExpression } from "../src/ast";
 import { Parser } from "../src/parser";
 import { Scanner } from "../src/scanner";
 
@@ -10,7 +10,7 @@ function reporter(message: Error) {
   console.error(message);
 }
 
-describe("scanner", () => {
+describe("parser", () => {
   test("EOF", async () => {
     const scanner = new Scanner("", logger);
     const tokens = scanner.scanTokens();
@@ -65,5 +65,21 @@ describe("scanner", () => {
     const parser = new Parser(tokens, reporter);
     const expressions = parser.parse();
     expect(expressions).toStrictEqual([new LiteralExpression("test")]);
+  });
+
+  test("property name", async () => {
+    const scanner = new Scanner("test", logger);
+    const tokens = scanner.scanTokens();
+    const parser = new Parser(tokens, reporter);
+    const expressions = parser.parse();
+    expect(expressions).toStrictEqual([new PropertyNameExpression("test")]);
+  });
+
+  test("property name - double quotes", async () => {
+    const scanner = new Scanner('"test"', logger);
+    const tokens = scanner.scanTokens();
+    const parser = new Parser(tokens, reporter);
+    const expressions = parser.parse();
+    expect(expressions).toStrictEqual([new PropertyNameExpression("test")]);
   });
 });

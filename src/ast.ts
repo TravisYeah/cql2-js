@@ -10,6 +10,7 @@ export interface ExpressionVisitor<T> {
   visitLogicalExpression(expr: LogicalExpression): T;
   visitLiteralExpression(expr: LiteralExpression): T;
   visitUnaryExpression(expr: UnaryExpression): T;
+  visitPropertyNameExpression(expr: PropertyNameExpression): T;
 }
 
 export class BooleanExpression implements Expression {
@@ -25,6 +26,18 @@ export class BooleanExpression implements Expression {
 
   accept<T>(visitor: ExpressionVisitor<T>): T {
     return visitor.visitBooleanExpression(this);
+  }
+}
+
+export class PropertyNameExpression implements Expression {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  accept<T>(visitor: ExpressionVisitor<T>): T {
+    return visitor.visitPropertyNameExpression(this);
   }
 }
 
