@@ -1,4 +1,5 @@
 import {
+  Expression,
   FunctionExpression,
   GroupedExpression,
   LiteralExpression,
@@ -16,69 +17,45 @@ function reporter(message: Error) {
   console.error(message);
 }
 
+function parse(input: string, output: Expression[]) {
+  const scanner = new Scanner(input, logger);
+  const tokens = scanner.scanTokens();
+  const parser = new Parser(tokens, reporter);
+  const expressions = parser.parse();
+  expect(expressions).toEqual(output);
+}
+
 describe("parser", () => {
   test("EOF", async () => {
-    const scanner = new Scanner("", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toEqual([]);
+    parse("", []);
   });
 
   test("true", async () => {
-    const scanner = new Scanner("true", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([new LiteralExpression(true)]);
+    parse("true", [new LiteralExpression(true)]);
   });
 
   test("false", async () => {
-    const scanner = new Scanner("false", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([new LiteralExpression(false)]);
+    parse("false", [new LiteralExpression(false)]);
   });
 
   test("numeric - integer", async () => {
-    const scanner = new Scanner("1", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([new LiteralExpression(1)]);
+    parse("1", [new LiteralExpression(1)]);
   });
 
   test("numeric - decimal", async () => {
-    const scanner = new Scanner("1.2", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([new LiteralExpression(1.2)]);
+    parse("1.2", [new LiteralExpression(1.2)]);
   });
 
   test("numeric - scientific notation", async () => {
-    const scanner = new Scanner("10E2", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([new LiteralExpression(100n)]);
+    parse("10E2", [new LiteralExpression(100n)]);
   });
 
   test("string", async () => {
-    const scanner = new Scanner("'test'", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([new LiteralExpression("test")]);
+    parse("'test'", [new LiteralExpression("test")]);
   });
 
   test("property name", async () => {
-    const scanner = new Scanner("test", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([
+    parse("test", [
       new PropertyNameExpression(
         new Token(TokenType.Identifier, "test", null, 1),
       ),
@@ -86,11 +63,7 @@ describe("parser", () => {
   });
 
   test("property name - double quotes", async () => {
-    const scanner = new Scanner('"test"', logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([
+    parse('"test"', [
       new PropertyNameExpression(
         new Token(TokenType.Identifier, "test", null, 1),
       ),
@@ -98,11 +71,7 @@ describe("parser", () => {
   });
 
   test("function - 1 args", async () => {
-    const scanner = new Scanner("test()", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([
+    parse("test()", [
       new FunctionExpression(
         new Token(TokenType.Identifier, "test", null, 1),
         [],
@@ -111,11 +80,7 @@ describe("parser", () => {
   });
 
   test("function - 1 arg", async () => {
-    const scanner = new Scanner("test(1)", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([
+    parse("test(1)", [
       new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
         new LiteralExpression(1),
       ]),
@@ -123,11 +88,7 @@ describe("parser", () => {
   });
 
   test("function - 2 args", async () => {
-    const scanner = new Scanner("test(1, 2)", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([
+    parse("test(1, 2)", [
       new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
         new LiteralExpression(1),
         new LiteralExpression(2),
@@ -136,11 +97,7 @@ describe("parser", () => {
   });
 
   test("function - 2 args", async () => {
-    const scanner = new Scanner("test(1, 2)", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([
+    parse("test(1, 2)", [
       new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
         new LiteralExpression(1),
         new LiteralExpression(2),
@@ -149,12 +106,6 @@ describe("parser", () => {
   });
 
   test("grouped expression", async () => {
-    const scanner = new Scanner("(1)", logger);
-    const tokens = scanner.scanTokens();
-    const parser = new Parser(tokens, reporter);
-    const expressions = parser.parse();
-    expect(expressions).toStrictEqual([
-      new GroupedExpression(new LiteralExpression(1)),
-    ]);
+    parse("(1)", [new GroupedExpression(new LiteralExpression(1))]);
   });
 });
