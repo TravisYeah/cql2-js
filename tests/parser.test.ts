@@ -72,7 +72,7 @@ describe("parser", () => {
     ]);
   });
 
-  test("function - 1 args", () => {
+  test("function - 0 args", () => {
     parse("test()", [
       new FunctionExpression(
         new Token(TokenType.Identifier, "test", null, 1),
