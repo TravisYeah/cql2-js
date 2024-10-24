@@ -1,4 +1,5 @@
 import {
+  BooleanExpression,
   Expression,
   FunctionExpression,
   GroupedExpression,
@@ -124,6 +125,15 @@ describe("parser", () => {
       new UnaryExpression(
         new Token(TokenType.Plus, "+", null, 1),
         new LiteralExpression(1),
+      ),
+    ]);
+  });
+
+  test("unary expression - NOT TRUE", () => {
+    parse("NOT TRUE", [
+      new UnaryExpression(
+        new Token(TokenType.Not, "NOT", null, 1),
+        new LiteralExpression(true),
       ),
     ]);
   });

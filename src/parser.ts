@@ -39,7 +39,7 @@ export class Parser {
   }
 
   private unary(): Expression {
-    if (this.match(TokenType.Minus, TokenType.Plus)) {
+    if (this.match(TokenType.Minus, TokenType.Plus, TokenType.Not)) {
       return new UnaryExpression(this.previous(), this.primary());
     }
 
