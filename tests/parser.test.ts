@@ -106,6 +106,36 @@ describe("parser", () => {
     ]);
   });
 
+  test("function - temporal date", () => {
+    parse("test(DATE('1234-01-02'), DATE('2345-02-03'))", [
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new FunctionExpression(
+          new Token(TokenType.Identifier, "DATE", null, 1),
+          [new LiteralExpression("1234-01-02")],
+        ),
+        new FunctionExpression(
+          new Token(TokenType.Identifier, "DATE", null, 1),
+          [new LiteralExpression("2345-02-03")],
+        ),
+      ]),
+    ]);
+  });
+
+  test("function - temporal timestamp", () => {
+    parse("test(DATE('1234-01-02T12:01:01'), DATE('2345-02-03T13:11:11'))", [
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new FunctionExpression(
+          new Token(TokenType.Identifier, "DATE", null, 1),
+          [new LiteralExpression("1234-01-02T12:01:01")],
+        ),
+        new FunctionExpression(
+          new Token(TokenType.Identifier, "DATE", null, 1),
+          [new LiteralExpression("2345-02-03T13:11:11")],
+        ),
+      ]),
+    ]);
+  });
+
   test("grouped expression", () => {
     parse("(1)", [new GroupedExpression(new LiteralExpression(1))]);
   });
