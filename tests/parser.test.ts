@@ -1,5 +1,4 @@
 import {
-  BooleanExpression,
   Expression,
   FunctionExpression,
   GroupedExpression,
