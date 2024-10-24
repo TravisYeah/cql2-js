@@ -13,130 +13,130 @@ function scan(input: string, output: Token[]) {
 }
 
 describe("scanner", () => {
-  test("EOF", async () => {
+  test("EOF", () => {
     scan("", [new Token(TokenType.EOF, "", null, 1)]);
   });
 
-  test("LeftParen", async () => {
+  test("LeftParen", () => {
     scan("(", [
       new Token(TokenType.LeftParen, "(", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("RightParen", async () => {
+  test("RightParen", () => {
     scan(")", [
       new Token(TokenType.RightParen, ")", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Plus", async () => {
+  test("Plus", () => {
     scan("+", [
       new Token(TokenType.Plus, "+", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Minus", async () => {
+  test("Minus", () => {
     scan("-", [
       new Token(TokenType.Minus, "-", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Equal", async () => {
+  test("Equal", () => {
     scan("=", [
       new Token(TokenType.Equal, "=", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("NotEqual", async () => {
+  test("NotEqual", () => {
     scan("<>", [
       new Token(TokenType.NotEqual, "<>", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Greater", async () => {
+  test("Greater", () => {
     scan(">", [
       new Token(TokenType.Greater, ">", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("GreaterEqual", async () => {
+  test("GreaterEqual", () => {
     scan(">=", [
       new Token(TokenType.GreaterEqual, ">=", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Less", async () => {
+  test("Less", () => {
     scan("<", [
       new Token(TokenType.Less, "<", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("LessEqual", async () => {
+  test("LessEqual", () => {
     scan("<=", [
       new Token(TokenType.LessEqual, "<=", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Comma", async () => {
+  test("Comma", () => {
     scan(",", [
       new Token(TokenType.Comma, ",", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("String", async () => {
+  test("String", () => {
     scan("'test'", [
       new Token(TokenType.String, "'test'", "test", 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("String - empty", async () => {
+  test("String - empty", () => {
     scan("''", [
       new Token(TokenType.String, "''", "", 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("String - unterminated string", async () => {
+  test("String - unterminated string", () => {
     const scanner = new Scanner("'test", logger);
     expect(() => scanner.scanTokens()).toThrow(
       new CqlSyntaxError("Unterminated string", 1),
     );
   });
 
-  test("String - backslash escaped quote", async () => {
+  test("String - backslash escaped quote", () => {
     scan("'te\\'st'", [
       new Token(TokenType.String, "'te\\'st'", "te'st", 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("String - two quote escaped quote", async () => {
+  test("String - two quote escaped quote", () => {
     scan("'te''st'", [
       new Token(TokenType.String, "'te''st'", "te'st", 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Numeric - 1", async () => {
+  test("Numeric - 1", () => {
     scan("1", [
       new Token(TokenType.Numeric, "1", 1, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Numeric - -1", async () => {
+  test("Numeric - -1", () => {
     scan("-1", [
       new Token(TokenType.Minus, "-", null, 1),
       new Token(TokenType.Numeric, "1", 1, 1),
@@ -144,14 +144,14 @@ describe("scanner", () => {
     ]);
   });
 
-  test("Numeric - 1.2", async () => {
+  test("Numeric - 1.2", () => {
     scan("1.2", [
       new Token(TokenType.Numeric, "1.2", 1.2, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Numeric - -1.2", async () => {
+  test("Numeric - -1.2", () => {
     scan("-1.2", [
       new Token(TokenType.Minus, "-", null, 1),
       new Token(TokenType.Numeric, "1.2", 1.2, 1),
@@ -159,7 +159,7 @@ describe("scanner", () => {
     ]);
   });
 
-  test("Numeric - 10E2", async () => {
+  test("Numeric - 10E2", () => {
     const scanner = new Scanner("10E2", logger);
     const tokens = scanner.scanTokens();
     expect(tokens).toHaveLength(2);
@@ -170,7 +170,7 @@ describe("scanner", () => {
     expect(tokens[1]).toEqual(new Token(TokenType.EOF, "", null, 1));
   });
 
-  test("Numeric - 10E-2", async () => {
+  test("Numeric - 10E-2", () => {
     const scanner = new Scanner("10E-2", logger);
     const tokens = scanner.scanTokens();
     expect(tokens).toHaveLength(2);
@@ -181,14 +181,14 @@ describe("scanner", () => {
     expect(tokens[1]).toEqual(new Token(TokenType.EOF, "", null, 1));
   });
 
-  test("Identifier", async () => {
+  test("Identifier", () => {
     scan("test", [
       new Token(TokenType.Identifier, "test", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Identifier - double quoted", async () => {
+  test("Identifier - double quoted", () => {
     scan('"test"', [
       new Token(TokenType.DoubleQuote, '"', null, 1),
       new Token(TokenType.Identifier, "test", null, 1),
@@ -197,77 +197,77 @@ describe("scanner", () => {
     ]);
   });
 
-  test("double quote", async () => {
+  test("double quote", () => {
     scan('"', [
       new Token(TokenType.DoubleQuote, '"', null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Star", async () => {
+  test("Star", () => {
     scan("*", [
       new Token(TokenType.Star, "*", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("Slash", async () => {
+  test("Slash", () => {
     scan("/", [
       new Token(TokenType.Slash, "/", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("%", async () => {
+  test("%", () => {
     scan("%", [
       new Token(TokenType.Modulus, "%", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("^", async () => {
+  test("^", () => {
     scan("^", [
       new Token(TokenType.Caret, "^", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("TRUE", async () => {
+  test("TRUE", () => {
     scan("TRUE", [
       new Token(TokenType.True, "TRUE", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("true", async () => {
+  test("true", () => {
     scan("true", [
       new Token(TokenType.True, "true", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("FALSE", async () => {
+  test("FALSE", () => {
     scan("FALSE", [
       new Token(TokenType.False, "FALSE", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("AND", async () => {
+  test("AND", () => {
     scan("AND", [
       new Token(TokenType.And, "AND", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("OR", async () => {
+  test("OR", () => {
     scan("OR", [
       new Token(TokenType.Or, "OR", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
 
-  test("NOT", async () => {
+  test("NOT", () => {
     scan("NOT", [
       new Token(TokenType.Not, "NOT", null, 1),
       new Token(TokenType.EOF, "", null, 1),

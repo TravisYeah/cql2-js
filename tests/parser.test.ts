@@ -26,35 +26,35 @@ function parse(input: string, output: Expression[]) {
 }
 
 describe("parser", () => {
-  test("EOF", async () => {
+  test("EOF", () => {
     parse("", []);
   });
 
-  test("true", async () => {
+  test("true", () => {
     parse("true", [new LiteralExpression(true)]);
   });
 
-  test("false", async () => {
+  test("false", () => {
     parse("false", [new LiteralExpression(false)]);
   });
 
-  test("numeric - integer", async () => {
+  test("numeric - integer", () => {
     parse("1", [new LiteralExpression(1)]);
   });
 
-  test("numeric - decimal", async () => {
+  test("numeric - decimal", () => {
     parse("1.2", [new LiteralExpression(1.2)]);
   });
 
-  test("numeric - scientific notation", async () => {
+  test("numeric - scientific notation", () => {
     parse("10E2", [new LiteralExpression(100n)]);
   });
 
-  test("string", async () => {
+  test("string", () => {
     parse("'test'", [new LiteralExpression("test")]);
   });
 
-  test("property name", async () => {
+  test("property name", () => {
     parse("test", [
       new PropertyNameExpression(
         new Token(TokenType.Identifier, "test", null, 1),
@@ -62,7 +62,7 @@ describe("parser", () => {
     ]);
   });
 
-  test("property name - double quotes", async () => {
+  test("property name - double quotes", () => {
     parse('"test"', [
       new PropertyNameExpression(
         new Token(TokenType.Identifier, "test", null, 1),
@@ -70,7 +70,7 @@ describe("parser", () => {
     ]);
   });
 
-  test("function - 1 args", async () => {
+  test("function - 1 args", () => {
     parse("test()", [
       new FunctionExpression(
         new Token(TokenType.Identifier, "test", null, 1),
@@ -79,7 +79,7 @@ describe("parser", () => {
     ]);
   });
 
-  test("function - 1 arg", async () => {
+  test("function - 1 arg", () => {
     parse("test(1)", [
       new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
         new LiteralExpression(1),
@@ -87,7 +87,7 @@ describe("parser", () => {
     ]);
   });
 
-  test("function - 2 args", async () => {
+  test("function - 2 args", () => {
     parse("test(1, 2)", [
       new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
         new LiteralExpression(1),
@@ -96,7 +96,7 @@ describe("parser", () => {
     ]);
   });
 
-  test("function - 2 args", async () => {
+  test("function - 2 args", () => {
     parse("test(1, 2)", [
       new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
         new LiteralExpression(1),
@@ -105,7 +105,7 @@ describe("parser", () => {
     ]);
   });
 
-  test("grouped expression", async () => {
+  test("grouped expression", () => {
     parse("(1)", [new GroupedExpression(new LiteralExpression(1))]);
   });
 });
