@@ -1,4 +1,9 @@
-import { Expression, LiteralExpression, PropertyNameExpression } from "./ast";
+import {
+  Expression,
+  FunctionExpression,
+  LiteralExpression,
+  PropertyNameExpression,
+} from "./ast";
 import { Token, TokenType } from "./token";
 import { CqlSyntaxError } from "./exceptions";
 
@@ -40,11 +45,10 @@ export class Parser {
       return new LiteralExpression(this.previous().literal);
     } else if (this.match(TokenType.String)) {
       return new LiteralExpression(this.previous().literal);
-    } else if (
-      this.check(TokenType.Identifier) ||
-      this.check(TokenType.DoubleQuote)
-    ) {
-      return this.propertyName();
+    } else if (this.check(TokenType.DoubleQuote)) {
+      return this.identifier();
+    } else if (this.check(TokenType.Identifier)) {
+      return this.identifier();
     }
 
     throw this.error(
@@ -53,12 +57,40 @@ export class Parser {
     );
   }
 
-  private propertyName(): Expression {
-    if (this.match(TokenType.Identifier)) {
-      return new PropertyNameExpression(this.previous().literal);
+  private identifier(): Expression {
+    if (this.peekNext()?.tokenType === TokenType.LeftParen) {
+      return this.function();
     }
+
+    return this.propertyName();
+  }
+
+  private function(): Expression {
+    const identifier = this.consume(
+      TokenType.Identifier,
+      "Expected identifier",
+    );
+
+    this.consume(TokenType.LeftParen, "Expected '('");
+
+    const args: Expression[] = [];
+    if (this.match(TokenType.RightParen)) {
+      return new FunctionExpression(identifier, args);
+    }
+
+    args.push(this.primary());
+    while (this.match(TokenType.Comma)) {
+      args.push(this.primary());
+    }
+
+    this.consume(TokenType.RightParen, "Expected ')'");
+
+    return new FunctionExpression(identifier, args);
+  }
+
+  private propertyName(): Expression {
     if (this.match(TokenType.DoubleQuote) && this.match(TokenType.Identifier)) {
-      const expr = new PropertyNameExpression(this.previous().literal);
+      const expr = new PropertyNameExpression(this.previous());
       if (!this.match(TokenType.DoubleQuote)) {
         throw this.error(
           this.peek(),
@@ -66,6 +98,9 @@ export class Parser {
         );
       }
       return expr;
+    }
+    if (this.match(TokenType.Identifier)) {
+      return new PropertyNameExpression(this.previous());
     }
 
     throw this.error(
@@ -82,6 +117,13 @@ export class Parser {
     return this.tokens[this.current];
   }
 
+  private peekNext(): Token | null {
+    if (!this.isAtEnd()) {
+      return this.tokens[this.current + 1];
+    }
+    return null;
+  }
+
   private previous(): Token {
     return this.tokens[this.current - 1];
   }
@@ -93,7 +135,7 @@ export class Parser {
     return this.previous();
   }
 
-  private check(type: TokenType): boolean {
+  private check<T extends TokenType>(type: T): type is T {
     if (this.isAtEnd()) {
       return false;
     }

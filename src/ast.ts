@@ -11,6 +11,7 @@ export interface ExpressionVisitor<T> {
   visitLiteralExpression(expr: LiteralExpression): T;
   visitUnaryExpression(expr: UnaryExpression): T;
   visitPropertyNameExpression(expr: PropertyNameExpression): T;
+  visitFunctionExpression(expr: FunctionExpression): T;
 }
 
 export class BooleanExpression implements Expression {
@@ -30,14 +31,28 @@ export class BooleanExpression implements Expression {
 }
 
 export class PropertyNameExpression implements Expression {
-  name: string;
+  name: Token;
 
-  constructor(name: string) {
+  constructor(name: Token) {
     this.name = name;
   }
 
   accept<T>(visitor: ExpressionVisitor<T>): T {
     return visitor.visitPropertyNameExpression(this);
+  }
+}
+
+export class FunctionExpression implements Expression {
+  identifier: Token;
+  args: Expression[];
+
+  constructor(identifier: Token, args: Expression[]) {
+    this.identifier = identifier;
+    this.args = args;
+  }
+
+  accept<T>(visitor: ExpressionVisitor<T>): T {
+    return visitor.visitFunctionExpression(this);
   }
 }
 

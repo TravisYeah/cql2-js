@@ -1,6 +1,11 @@
-import { LiteralExpression, PropertyNameExpression } from "../src/ast";
+import {
+  FunctionExpression,
+  LiteralExpression,
+  PropertyNameExpression,
+} from "../src/ast";
 import { Parser } from "../src/parser";
 import { Scanner } from "../src/scanner";
+import { Token, TokenType } from "../src/token";
 
 function logger(line: number, message: string) {
   console.log(line, message);
@@ -72,7 +77,11 @@ describe("parser", () => {
     const tokens = scanner.scanTokens();
     const parser = new Parser(tokens, reporter);
     const expressions = parser.parse();
-    expect(expressions).toStrictEqual([new PropertyNameExpression("test")]);
+    expect(expressions).toStrictEqual([
+      new PropertyNameExpression(
+        new Token(TokenType.Identifier, "test", null, 1),
+      ),
+    ]);
   });
 
   test("property name - double quotes", async () => {
@@ -80,6 +89,48 @@ describe("parser", () => {
     const tokens = scanner.scanTokens();
     const parser = new Parser(tokens, reporter);
     const expressions = parser.parse();
-    expect(expressions).toStrictEqual([new PropertyNameExpression("test")]);
+    expect(expressions).toStrictEqual([
+      new PropertyNameExpression(
+        new Token(TokenType.Identifier, "test", null, 1),
+      ),
+    ]);
+  });
+
+  test("function - 1 args", async () => {
+    const scanner = new Scanner("test()", logger);
+    const tokens = scanner.scanTokens();
+    const parser = new Parser(tokens, reporter);
+    const expressions = parser.parse();
+    expect(expressions).toStrictEqual([
+      new FunctionExpression(
+        new Token(TokenType.Identifier, "test", null, 1),
+        [],
+      ),
+    ]);
+  });
+
+  test("function - 1 arg", async () => {
+    const scanner = new Scanner("test(1)", logger);
+    const tokens = scanner.scanTokens();
+    const parser = new Parser(tokens, reporter);
+    const expressions = parser.parse();
+    expect(expressions).toStrictEqual([
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new LiteralExpression(1),
+      ]),
+    ]);
+  });
+
+  test("function - 2 args", async () => {
+    const scanner = new Scanner("test(1, 2)", logger);
+    const tokens = scanner.scanTokens();
+    const parser = new Parser(tokens, reporter);
+    const expressions = parser.parse();
+    expect(expressions).toStrictEqual([
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new LiteralExpression(1),
+        new LiteralExpression(2),
+      ]),
+    ]);
   });
 });

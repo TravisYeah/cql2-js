@@ -93,13 +93,20 @@ export class Scanner {
       case "^":
         this.addToken(TokenType.Caret);
         break;
+      case " ":
+      case "\r":
+      case "\t":
+        break;
+      case "\n":
+        this.line++;
+        break;
       default:
         if (this.isDigit(c)) {
           this.number();
         } else if (this.isIdentifierStart(c)) {
           this.identifier();
         } else {
-          this.error(this.line, `Unexpected character: ${c}`);
+          this.error(this.line, `Unexpected character: '${c}'`);
         }
     }
   }
@@ -126,7 +133,7 @@ export class Scanner {
       return;
     }
 
-    this.addToken(TokenType.Identifier, text);
+    this.addToken(TokenType.Identifier);
   }
 
   private isIdentifierPart(c: string): boolean {
