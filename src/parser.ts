@@ -4,6 +4,7 @@ import {
   GroupedExpression,
   LiteralExpression,
   PropertyNameExpression,
+  UnaryExpression,
 } from "./ast";
 import { Token, TokenType } from "./token";
 import { CqlSyntaxError } from "./exceptions";
@@ -34,6 +35,14 @@ export class Parser {
   }
 
   private booleanExpression(): Expression {
+    return this.unary();
+  }
+
+  private unary(): Expression {
+    if (this.match(TokenType.Minus, TokenType.Plus)) {
+      return new UnaryExpression(this.previous(), this.primary());
+    }
+
     return this.primary();
   }
 

@@ -4,6 +4,7 @@ import {
   GroupedExpression,
   LiteralExpression,
   PropertyNameExpression,
+  UnaryExpression,
 } from "../src/ast";
 import { Parser } from "../src/parser";
 import { Scanner } from "../src/scanner";
@@ -107,5 +108,23 @@ describe("parser", () => {
 
   test("grouped expression", () => {
     parse("(1)", [new GroupedExpression(new LiteralExpression(1))]);
+  });
+
+  test("unary expression - -1", () => {
+    parse("-1", [
+      new UnaryExpression(
+        new Token(TokenType.Minus, "-", null, 1),
+        new LiteralExpression(1),
+      ),
+    ]);
+  });
+
+  test("unary expression - +1", () => {
+    parse("+1", [
+      new UnaryExpression(
+        new Token(TokenType.Plus, "+", null, 1),
+        new LiteralExpression(1),
+      ),
+    ]);
   });
 });
