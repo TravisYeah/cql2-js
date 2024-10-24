@@ -12,6 +12,7 @@ export interface ExpressionVisitor<T> {
   visitUnaryExpression(expr: UnaryExpression): T;
   visitPropertyNameExpression(expr: PropertyNameExpression): T;
   visitFunctionExpression(expr: FunctionExpression): T;
+  visitGroupedExpression(expr: GroupedExpression): T;
 }
 
 export class BooleanExpression implements Expression {
@@ -111,5 +112,17 @@ export class UnaryExpression implements Expression {
 
   accept<T>(visitor: ExpressionVisitor<T>): T {
     return visitor.visitUnaryExpression(this);
+  }
+}
+
+export class GroupedExpression implements Expression {
+  expression: Expression;
+
+  constructor(expression: Expression) {
+    this.expression = expression;
+  }
+
+  accept<T>(visitor: ExpressionVisitor<T>): T {
+    return visitor.visitGroupedExpression(this);
   }
 }

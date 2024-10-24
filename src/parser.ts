@@ -1,6 +1,7 @@
 import {
   Expression,
   FunctionExpression,
+  GroupedExpression,
   LiteralExpression,
   PropertyNameExpression,
 } from "./ast";
@@ -49,6 +50,10 @@ export class Parser {
       return this.identifier();
     } else if (this.check(TokenType.Identifier)) {
       return this.identifier();
+    } else if (this.match(TokenType.LeftParen)) {
+      const expr = this.primary();
+      this.consume(TokenType.RightParen, "Expect ')' after expression");
+      return new GroupedExpression(expr);
     }
 
     throw this.error(

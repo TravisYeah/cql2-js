@@ -1,5 +1,6 @@
 import {
   FunctionExpression,
+  GroupedExpression,
   LiteralExpression,
   PropertyNameExpression,
 } from "../src/ast";
@@ -131,6 +132,29 @@ describe("parser", () => {
         new LiteralExpression(1),
         new LiteralExpression(2),
       ]),
+    ]);
+  });
+
+  test("function - 2 args", async () => {
+    const scanner = new Scanner("test(1, 2)", logger);
+    const tokens = scanner.scanTokens();
+    const parser = new Parser(tokens, reporter);
+    const expressions = parser.parse();
+    expect(expressions).toStrictEqual([
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new LiteralExpression(1),
+        new LiteralExpression(2),
+      ]),
+    ]);
+  });
+
+  test("grouped expression", async () => {
+    const scanner = new Scanner("(1)", logger);
+    const tokens = scanner.scanTokens();
+    const parser = new Parser(tokens, reporter);
+    const expressions = parser.parse();
+    expect(expressions).toStrictEqual([
+      new GroupedExpression(new LiteralExpression(1)),
     ]);
   });
 });
