@@ -3,6 +3,7 @@ import {
   FunctionExpression,
   GroupedExpression,
   LiteralExpression,
+  LogicalExpression,
   PropertyNameExpression,
   UnaryExpression,
 } from "./ast";
@@ -35,7 +36,19 @@ export class Parser {
   }
 
   private booleanExpression(): Expression {
-    return this.unary();
+    return this.or();
+  }
+
+  private or(): Expression {
+    let expr = this.unary();
+
+    while (this.match(TokenType.Or)) {
+      const operator = this.previous();
+      const right = this.or();
+      expr = new LogicalExpression(expr, operator, right);
+    }
+
+    return expr;
   }
 
   private unary(): Expression {

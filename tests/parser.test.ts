@@ -3,6 +3,7 @@ import {
   FunctionExpression,
   GroupedExpression,
   LiteralExpression,
+  LogicalExpression,
   PropertyNameExpression,
   UnaryExpression,
 } from "../src/ast";
@@ -163,6 +164,16 @@ describe("parser", () => {
       new UnaryExpression(
         new Token(TokenType.Not, "NOT", null, 1),
         new LiteralExpression(true),
+      ),
+    ]);
+  });
+
+  test("or", () => {
+    parse("TRUE OR FALSE", [
+      new LogicalExpression(
+        new LiteralExpression(true),
+        new Token(TokenType.Or, "OR", null, 1),
+        new LiteralExpression(false),
       ),
     ]);
   });
