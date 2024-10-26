@@ -177,4 +177,14 @@ describe("parser", () => {
       ),
     ]);
   });
+
+  test("and", () => {
+    parse("TRUE AND FALSE", [
+      new LogicalExpression(
+        new LiteralExpression(true),
+        new Token(TokenType.And, "AND", null, 1),
+        new LiteralExpression(false),
+      ),
+    ]);
+  });
 });

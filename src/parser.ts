@@ -40,11 +40,23 @@ export class Parser {
   }
 
   private or(): Expression {
-    let expr = this.unary();
+    let expr = this.and();
 
     while (this.match(TokenType.Or)) {
       const operator = this.previous();
-      const right = this.or();
+      const right = this.and();
+      expr = new LogicalExpression(expr, operator, right);
+    }
+
+    return expr;
+  }
+
+  private and(): Expression {
+    let expr = this.unary();
+
+    while (this.match(TokenType.And)) {
+      const operator = this.previous();
+      const right = this.unary();
       expr = new LogicalExpression(expr, operator, right);
     }
 
