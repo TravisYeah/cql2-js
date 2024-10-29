@@ -10,6 +10,7 @@ export class Scanner {
   error: (line: number, message: string) => void;
   keywords = new Map<string, TokenType>([
     ["AND", TokenType.And],
+    ["BETWEEN", TokenType.Between],
     ["LIKE", TokenType.Like],
     ["OR", TokenType.Or],
     ["NOT", TokenType.Not],

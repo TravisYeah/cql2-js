@@ -50,4 +50,5 @@ export enum TokenType {
   Not = "Not",
   Or = "Or",
   Like = "Like",
+  Between = "Between",
 }

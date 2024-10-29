@@ -77,15 +77,20 @@ export class Parser {
         TokenType.LessEqual,
         TokenType.GreaterEqual,
         TokenType.Like,
+        TokenType.Between,
         TokenType.Not,
       )
     ) {
       if (this.previous().tokenType === TokenType.Not) {
         const not = this.previous();
-        const operator = this.consume(
-          TokenType.Like,
-          "Expected LIKE operator after negated comparison.",
-        );
+
+        if (!this.match(TokenType.Like, TokenType.Between)) {
+          throw this.error(
+            this.peek(),
+            "Expected LIKE or BETWEEN keyword after NOT keyword",
+          );
+        }
+        const operator = this.previous();
         const right = this.unary();
         expr = new BinaryExpression(expr, new UnaryToken(not, operator), right);
       } else {
