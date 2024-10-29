@@ -1,4 +1,5 @@
 import {
+  BinaryExpression,
   Expression,
   FunctionExpression,
   GroupedExpression,
@@ -52,12 +53,33 @@ export class Parser {
   }
 
   private and(): Expression {
-    let expr = this.unary();
+    let expr = this.comparison();
 
     while (this.match(TokenType.And)) {
       const operator = this.previous();
-      const right = this.unary();
+      const right = this.comparison();
       expr = new LogicalExpression(expr, operator, right);
+    }
+
+    return expr;
+  }
+
+  private comparison(): Expression {
+    let expr = this.unary();
+
+    while (
+      this.match(
+        TokenType.Equal,
+        TokenType.NotEqual,
+        TokenType.Less,
+        TokenType.Greater,
+        TokenType.LessEqual,
+        TokenType.GreaterEqual,
+      )
+    ) {
+      const operator = this.previous();
+      const right = this.unary();
+      expr = new BinaryExpression(expr, operator, right);
     }
 
     return expr;

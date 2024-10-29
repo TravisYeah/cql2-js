@@ -187,4 +187,64 @@ describe("parser", () => {
       ),
     ]);
   });
+
+  test("=", () => {
+    parse("1 > 2", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Greater, ">", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("<>", () => {
+    parse("1 <> 2", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.NotEqual, "<>", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("<", () => {
+    parse("1 < 2", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Less, "<", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test(">", () => {
+    parse("1 > 2", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Greater, ">", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("<=", () => {
+    parse("1 <= 2", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.LessEqual, "<=", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test(">=", () => {
+    parse("1 >= 2", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.GreaterEqual, ">=", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
 });
