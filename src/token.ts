@@ -49,4 +49,5 @@ export enum TokenType {
   Date = "Date",
   Not = "Not",
   Or = "Or",
+  Like = "Like",
 }
