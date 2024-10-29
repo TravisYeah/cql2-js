@@ -7,6 +7,7 @@ import {
   LogicalExpression,
   PropertyNameExpression,
   UnaryExpression,
+  UnaryToken,
 } from "./ast";
 import { Token, TokenType } from "./token";
 import { CqlSyntaxError } from "./exceptions";
@@ -75,11 +76,23 @@ export class Parser {
         TokenType.Greater,
         TokenType.LessEqual,
         TokenType.GreaterEqual,
+        TokenType.Like,
+        TokenType.Not,
       )
     ) {
-      const operator = this.previous();
-      const right = this.unary();
-      expr = new BinaryExpression(expr, operator, right);
+      if (this.previous().tokenType === TokenType.Not) {
+        const not = this.previous();
+        const operator = this.consume(
+          TokenType.Like,
+          "Expected LIKE operator after negated comparison.",
+        );
+        const right = this.unary();
+        expr = new BinaryExpression(expr, new UnaryToken(not, operator), right);
+      } else {
+        const operator = this.previous();
+        const right = this.unary();
+        expr = new BinaryExpression(expr, operator, right);
+      }
     }
 
     return expr;
@@ -87,7 +100,8 @@ export class Parser {
 
   private unary(): Expression {
     if (this.match(TokenType.Minus, TokenType.Plus, TokenType.Not)) {
-      return new UnaryExpression(this.previous(), this.primary());
+      const operator = this.previous();
+      return new UnaryExpression(operator, this.primary());
     }
 
     return this.primary();

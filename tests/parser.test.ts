@@ -6,6 +6,7 @@ import {
   LogicalExpression,
   PropertyNameExpression,
   UnaryExpression,
+  UnaryToken,
 } from "../src/ast";
 import { Parser } from "../src/parser";
 import { Scanner } from "../src/scanner";
@@ -24,6 +25,7 @@ function parse(input: string, output: Expression[]) {
   const tokens = scanner.scanTokens();
   const parser = new Parser(tokens, reporter);
   const expressions = parser.parse();
+  console.log(expressions);
   expect(expressions).toEqual(output);
 }
 
@@ -243,6 +245,29 @@ describe("parser", () => {
       new LogicalExpression(
         new LiteralExpression(1),
         new Token(TokenType.GreaterEqual, ">=", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("LIKE", () => {
+    parse("1 LIKE 2", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Like, "LIKE", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("NOT LIKE", () => {
+    parse("1 NOT LIKE 2", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new UnaryToken(
+          new Token(TokenType.Not, "NOT", null, 1),
+          new Token(TokenType.Like, "LIKE", null, 1),
+        ),
         new LiteralExpression(2),
       ),
     ]);

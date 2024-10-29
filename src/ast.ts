@@ -5,6 +5,7 @@ export interface Expression {
 }
 
 export interface ExpressionVisitor<T> {
+  visitUnaryToken(expr: UnaryToken): T;
   visitBooleanExpression(expr: BooleanExpression): T;
   visitBinaryExpression(expr: BinaryExpression): T;
   visitLogicalExpression(expr: LogicalExpression): T;
@@ -59,10 +60,14 @@ export class FunctionExpression implements Expression {
 
 export class BinaryExpression implements Expression {
   left: Expression;
-  operator: Token;
+  operator: Token | UnaryToken;
   right: Expression;
 
-  constructor(left: Expression, operator: Token, right: Expression) {
+  constructor(
+    left: Expression,
+    operator: Token | UnaryToken,
+    right: Expression,
+  ) {
     this.left = left;
     this.operator = operator;
     this.right = right;
@@ -75,10 +80,14 @@ export class BinaryExpression implements Expression {
 
 export class LogicalExpression implements Expression {
   left: Expression;
-  operator: Token;
+  operator: Token | UnaryToken;
   right: Expression;
 
-  constructor(left: Expression, operator: Token, right: Expression) {
+  constructor(
+    left: Expression,
+    operator: Token | UnaryToken,
+    right: Expression,
+  ) {
     this.left = left;
     this.operator = operator;
     this.right = right;
@@ -112,6 +121,20 @@ export class UnaryExpression implements Expression {
 
   accept<T>(visitor: ExpressionVisitor<T>): T {
     return visitor.visitUnaryExpression(this);
+  }
+}
+
+export class UnaryToken implements Expression {
+  operator: Token;
+  right: Token;
+
+  constructor(operator: Token, right: Token) {
+    this.operator = operator;
+    this.right = right;
+  }
+
+  accept<T>(visitor: ExpressionVisitor<T>): T {
+    return visitor.visitUnaryToken(this);
   }
 }
 
