@@ -1,5 +1,9 @@
-import { CqlSyntaxError } from "./exceptions";
+import { Loc } from "./reporter";
 import { Token, TokenType } from "./token";
+
+type ScannerOptions = {
+  tabWidth?: number;
+};
 
 export class Scanner {
   source: string;
@@ -8,7 +12,8 @@ export class Scanner {
   current = 0;
   line = 1;
   offset = 0;
-  error: (line: number, offset: number, message: string) => void;
+  startOffset = 0;
+  _error: (message: string, loc: Loc) => void;
   keywords = new Map<string, TokenType>([
     ["AND", TokenType.And],
     ["BETWEEN", TokenType.Between],
@@ -22,18 +27,26 @@ export class Scanner {
     ["IS", TokenType.Is],
     ["DIV", TokenType.Div],
   ]);
+  options: Required<ScannerOptions>;
 
   constructor(
     source: string,
-    error: (line: number, offset: number, message: string) => void,
+    error: (message: string, loc: Loc) => void,
+    options?: ScannerOptions,
   ) {
     this.source = source;
-    this.error = error;
+    this._error = error;
+    this.options = { ...options, tabWidth: 4 };
+  }
+
+  error(message: string) {
+    return this._error(message, { row: this.line, col: this.startOffset });
   }
 
   scanTokens() {
     while (!this.isAtEnd()) {
       this.start = this.current;
+      this.startOffset = this.offset;
       this.scanToken();
     }
 
@@ -105,7 +118,9 @@ export class Scanner {
         break;
       case " ":
       case "\r":
+        break;
       case "\t":
+        this.offset += this.options.tabWidth - 1;
         break;
       case "\n":
         this.offset = 0;
@@ -117,7 +132,7 @@ export class Scanner {
         } else if (this.isIdentifierStart(c)) {
           this.identifier();
         } else {
-          this.error(this.line, this.offset, `Unexpected character: '${c}'`);
+          this.error(`Unexpected character: '${c}'`);
         }
     }
   }
@@ -128,11 +143,7 @@ export class Scanner {
       case "'":
         this.string();
       default:
-        this.error(
-          this.line,
-          this.offset,
-          `Unexpected escaped character: ${c}`,
-        );
+        this.error(`Unexpected escaped character: ${c}`);
     }
   }
 
@@ -233,8 +244,8 @@ export class Scanner {
         this.advance();
         break;
       }
-      this.error(this.line, this.offset, "Unterminated string");
-      throw new CqlSyntaxError("Unterminated string", this.line);
+      this.error("Unterminated string");
+      return;
     }
 
     this.addToken(TokenType.String, value);

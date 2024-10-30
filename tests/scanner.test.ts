@@ -1,9 +1,9 @@
-import { CqlSyntaxError } from "../src/exceptions";
+import { Loc, toErrorMessage } from "../src/reporter";
 import { Scanner } from "../src/scanner";
 import { Token, TokenType } from "../src/token";
 
-function logger(line: number, offset: number, message: string) {
-  console.log(line, offset, message);
+function logger(message: string, loc: Loc) {
+  console.log(message, loc);
 }
 
 function scan(input: string, output: Token[]) {
@@ -109,15 +109,100 @@ describe("scanner", () => {
   });
 
   test("String - unterminated string", () => {
-    let calledLogger = false;
-    function mockLogger(line: number, offset: number, message: string) {
-      calledLogger = true;
+    const src = "'test";
+    let msg = "";
+    function mockReporter(message: string, loc: Loc) {
+      msg = toErrorMessage(src, message, loc);
     }
-    const scanner = new Scanner("'test", mockLogger);
-    expect(() => scanner.scanTokens()).toThrow(
-      new CqlSyntaxError("Unterminated string", 1),
-    );
-    expect(calledLogger).toBeTruthy();
+    const scanner = new Scanner(src, mockReporter);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([new Token(TokenType.EOF, "", null, 1)]);
+    const expectedMsg = `SyntaxError: Unterminated string (1:0)
+1 | 'test
+  | ^
+`;
+    expect(msg).toEqual(expectedMsg);
+  });
+
+  test("String - unterminated multiline string", () => {
+    const src = "'test\nabc";
+    let msg = "";
+    function mockReporter(message: string, loc: Loc) {
+      msg = toErrorMessage(src, message, loc);
+    }
+    const scanner = new Scanner(src, mockReporter);
+    const tokens = scanner.scanTokens();
+    expect(tokens).toEqual([new Token(TokenType.EOF, "", null, 1)]);
+    const expectedMsg = `SyntaxError: Unterminated string (1:0)
+1 | 'test
+  | ^
+2 | abc
+`;
+    expect(msg).toEqual(expectedMsg);
+  });
+
+  test("String - unterminated string not at start", () => {
+    const src = "1 'test";
+    let msg = "";
+    function mockReporter(message: string, loc: Loc) {
+      msg = toErrorMessage(src, message, loc);
+    }
+    const scanner = new Scanner(src, mockReporter);
+    scanner.scanTokens();
+    const expectedMsg = `SyntaxError: Unterminated string (1:2)
+1 | 1 'test
+  |   ^
+`;
+    expect(msg).toEqual(expectedMsg);
+  });
+
+  test("String - unterminated string second line", () => {
+    const src = "\n'test";
+    let msg = "";
+    function mockReporter(message: string, loc: Loc) {
+      msg = toErrorMessage(src, message, loc);
+    }
+    const scanner = new Scanner(src, mockReporter);
+    scanner.scanTokens();
+    const expectedMsg = `SyntaxError: Unterminated string (2:0)
+1 | 
+2 | 'test
+  | ^
+`;
+    expect(msg).toEqual(expectedMsg);
+  });
+
+  test("String - unterminated string with tab before it", () => {
+    const src = "\t'test";
+    let msg = "";
+    function mockReporter(message: string, loc: Loc) {
+      msg = toErrorMessage(src, message, loc);
+    }
+    const scanner = new Scanner(src, mockReporter);
+    scanner.scanTokens();
+    const expectedMsg = `SyntaxError: Unterminated string (1:4)
+1 |     'test
+  |     ^
+`;
+    expect(msg).toEqual(expectedMsg);
+  });
+
+  test("String - unterminated string with lines above and below it", () => {
+    const src = "1\n2\n3\n'test\n4\n5";
+    let msg = "";
+    function mockReporter(message: string, loc: Loc) {
+      msg = toErrorMessage(src, message, loc);
+    }
+    const scanner = new Scanner(src, mockReporter);
+    scanner.scanTokens();
+    const expectedMsg = `SyntaxError: Unterminated string (4:0)
+2 | 2
+3 | 3
+4 | 'test
+  | ^
+5 | 4
+`;
+    expect(msg).toEqual(expectedMsg);
   });
 
   test("String - backslash escaped quote", () => {
@@ -305,17 +390,5 @@ describe("scanner", () => {
       new Token(TokenType.Null, "NULL", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
-  });
-
-  test("error message", () => {
-    let msg = "";
-    function formattedLogger(line: number, offset: number, message: string) {
-      msg = `Line ${line}, offset: ${offset}, message: ${message}`;
-    }
-    const scanner = new Scanner("'test", formattedLogger);
-    try {
-      scanner.scanTokens();
-    } catch {}
-    expect(msg).toEqual(`Line 1, offset: 5, message: Unterminated string`);
   });
 });
