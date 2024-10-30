@@ -7,7 +7,8 @@ export class Scanner {
   start = 0;
   current = 0;
   line = 1;
-  error: (line: number, message: string) => void;
+  offset = 0;
+  error: (line: number, offset: number, message: string) => void;
   keywords = new Map<string, TokenType>([
     ["AND", TokenType.And],
     ["BETWEEN", TokenType.Between],
@@ -22,7 +23,10 @@ export class Scanner {
     ["DIV", TokenType.Div],
   ]);
 
-  constructor(source: string, error: (line: number, message: string) => void) {
+  constructor(
+    source: string,
+    error: (line: number, offset: number, message: string) => void,
+  ) {
     this.source = source;
     this.error = error;
   }
@@ -104,6 +108,7 @@ export class Scanner {
       case "\t":
         break;
       case "\n":
+        this.offset = 0;
         this.line++;
         break;
       default:
@@ -112,7 +117,7 @@ export class Scanner {
         } else if (this.isIdentifierStart(c)) {
           this.identifier();
         } else {
-          this.error(this.line, `Unexpected character: '${c}'`);
+          this.error(this.line, this.offset, `Unexpected character: '${c}'`);
         }
     }
   }
@@ -123,7 +128,11 @@ export class Scanner {
       case "'":
         this.string();
       default:
-        this.error(this.line, `Unexpected escaped character: ${c}`);
+        this.error(
+          this.line,
+          this.offset,
+          `Unexpected escaped character: ${c}`,
+        );
     }
   }
 
@@ -224,6 +233,7 @@ export class Scanner {
         this.advance();
         break;
       }
+      this.error(this.line, this.offset, "Unterminated string");
       throw new CqlSyntaxError("Unterminated string", this.line);
     }
 
@@ -349,10 +359,12 @@ export class Scanner {
       return false;
     }
     this.current++;
+    this.offset++;
     return true;
   }
 
   advance(): string {
+    this.offset++;
     return this.source.charAt(this.current++);
   }
 

@@ -2,8 +2,8 @@ import { CqlSyntaxError } from "../src/exceptions";
 import { Scanner } from "../src/scanner";
 import { Token, TokenType } from "../src/token";
 
-function logger(line: number, message: string) {
-  console.log(line, message);
+function logger(line: number, offset: number, message: string) {
+  console.log(line, offset, message);
 }
 
 function scan(input: string, output: Token[]) {
@@ -300,5 +300,17 @@ describe("scanner", () => {
       new Token(TokenType.Null, "NULL", null, 1),
       new Token(TokenType.EOF, "", null, 1),
     ]);
+  });
+
+  test("error message", () => {
+    let msg = "";
+    function formattedLogger(line: number, offset: number, message: string) {
+      msg = `Line ${line}, offset: ${offset}, message: ${message}`;
+    }
+    const scanner = new Scanner("'test", formattedLogger);
+    try {
+      scanner.scanTokens();
+    } catch {}
+    expect(msg).toEqual(`Line 1, offset: 5, message: Unterminated string`);
   });
 });

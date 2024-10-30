@@ -14,8 +14,8 @@ import { Parser } from "../src/parser";
 import { Scanner } from "../src/scanner";
 import { Token, TokenType } from "../src/token";
 
-function logger(line: number, message: string) {
-  console.log(line, message);
+function logger(line: number, offset: number, message: string) {
+  console.log(line, offset, message);
 }
 
 function reporter(message: Error) {
