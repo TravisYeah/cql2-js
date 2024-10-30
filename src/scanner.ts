@@ -17,6 +17,8 @@ export class Scanner {
     ["NOT", TokenType.Not],
     ["TRUE", TokenType.True],
     ["FALSE", TokenType.False],
+    ["NULL", TokenType.Null],
+    ["IS", TokenType.Is],
   ]);
 
   constructor(source: string, error: (line: number, message: string) => void) {

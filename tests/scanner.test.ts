@@ -287,4 +287,18 @@ describe("scanner", () => {
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
+
+  test("IS", () => {
+    scan("IS", [
+      new Token(TokenType.Is, "IS", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
+
+  test("NULL", () => {
+    scan("NULL", [
+      new Token(TokenType.Null, "NULL", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
 });

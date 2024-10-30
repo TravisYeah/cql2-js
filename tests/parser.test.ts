@@ -318,4 +318,27 @@ describe("parser", () => {
       ),
     ]);
   });
+
+  test("IS NULL", () => {
+    parse("1 IS NULL", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Is, "IS", null, 1),
+        new LiteralExpression(null),
+      ),
+    ]);
+  });
+
+  test("IS NOT NULL", () => {
+    parse("1 IS NOT NULL", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Is, "IS", null, 1),
+        new UnaryExpression(
+          new Token(TokenType.Not, "NOT", null, 1),
+          new LiteralExpression(null),
+        ),
+      ),
+    ]);
+  });
 });

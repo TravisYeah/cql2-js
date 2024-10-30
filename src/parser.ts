@@ -81,6 +81,7 @@ export class Parser {
         TokenType.Between,
         TokenType.In,
         TokenType.Not,
+        TokenType.Is,
       )
     ) {
       if (this.previous()?.tokenType === TokenType.Not) {
@@ -123,6 +124,8 @@ export class Parser {
       return new LiteralExpression(this.previous()?.literal);
     } else if (this.match(TokenType.String)) {
       return new LiteralExpression(this.previous()?.literal);
+    } else if (this.match(TokenType.Null)) {
+      return new LiteralExpression(null);
     } else if (this.check(TokenType.DoubleQuote)) {
       return this.identifier();
     } else if (this.check(TokenType.Identifier)) {
