@@ -191,6 +191,34 @@ describe("parser", () => {
     ]);
   });
 
+  test("or and", () => {
+    parse("TRUE OR FALSE AND TRUE", [
+      new LogicalExpression(
+        new LiteralExpression(true),
+        new Token(TokenType.Or, "OR", null, 1),
+        new LogicalExpression(
+          new LiteralExpression(false),
+          new Token(TokenType.And, "AND", null, 1),
+          new LiteralExpression(true),
+        ),
+      ),
+    ]);
+  });
+
+  test("and or", () => {
+    parse("TRUE AND FALSE OR TRUE", [
+      new LogicalExpression(
+        new LogicalExpression(
+          new LiteralExpression(true),
+          new Token(TokenType.And, "AND", null, 1),
+          new LiteralExpression(false),
+        ),
+        new Token(TokenType.Or, "OR", null, 1),
+        new LiteralExpression(true),
+      ),
+    ]);
+  });
+
   test("=", () => {
     parse("1 > 2", [
       new LogicalExpression(
