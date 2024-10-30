@@ -1,4 +1,5 @@
 import {
+  ArrayExpression,
   BinaryExpression,
   Expression,
   FunctionExpression,
@@ -78,16 +79,17 @@ export class Parser {
         TokenType.GreaterEqual,
         TokenType.Like,
         TokenType.Between,
+        TokenType.In,
         TokenType.Not,
       )
     ) {
-      if (this.previous().tokenType === TokenType.Not) {
+      if (this.previous()?.tokenType === TokenType.Not) {
         const not = this.previous();
 
-        if (!this.match(TokenType.Like, TokenType.Between)) {
+        if (!this.match(TokenType.Like, TokenType.Between, TokenType.In)) {
           throw this.error(
             this.peek(),
-            "Expected LIKE or BETWEEN keyword after NOT keyword",
+            "Expected LIKE, BETWEEN, or IN keyword after NOT keyword",
           );
         }
         const operator = this.previous();
@@ -118,23 +120,52 @@ export class Parser {
     } else if (this.match(TokenType.False)) {
       return new LiteralExpression(false);
     } else if (this.match(TokenType.Numeric)) {
-      return new LiteralExpression(this.previous().literal);
+      return new LiteralExpression(this.previous()?.literal);
     } else if (this.match(TokenType.String)) {
-      return new LiteralExpression(this.previous().literal);
+      return new LiteralExpression(this.previous()?.literal);
     } else if (this.check(TokenType.DoubleQuote)) {
       return this.identifier();
     } else if (this.check(TokenType.Identifier)) {
       return this.identifier();
-    } else if (this.match(TokenType.LeftParen)) {
-      const expr = this.primary();
-      this.consume(TokenType.RightParen, "Expect ')' after expression");
-      return new GroupedExpression(expr);
+    } else if (this.check(TokenType.LeftParen)) {
+      if (this.previous()?.tokenType === TokenType.In) {
+        this.consume(TokenType.LeftParen, "Expected '(' after IN keyword");
+        return this.array();
+      } else {
+        this.consume(
+          TokenType.LeftParen,
+          "Expected '(' before grouped expression",
+        );
+        const expr = this.primary();
+        this.consume(
+          TokenType.RightParen,
+          "Expected ')' after grouped expression",
+        );
+        return new GroupedExpression(expr);
+      }
     }
 
     throw this.error(
       this.peek(),
       `Expected expression but received ${this.peek()}`,
     );
+  }
+
+  private array(): Expression {
+    const items: Expression[] = [];
+
+    if (this.match(TokenType.RightParen)) {
+      return new ArrayExpression(items);
+    }
+
+    items.push(this.primary());
+    while (this.match(TokenType.Comma)) {
+      items.push(this.primary());
+    }
+
+    this.consume(TokenType.RightParen, "Expected ')' after array");
+
+    return new ArrayExpression(items);
   }
 
   private identifier(): Expression {

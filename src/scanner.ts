@@ -11,6 +11,7 @@ export class Scanner {
   keywords = new Map<string, TokenType>([
     ["AND", TokenType.And],
     ["BETWEEN", TokenType.Between],
+    ["IN", TokenType.In],
     ["LIKE", TokenType.Like],
     ["OR", TokenType.Or],
     ["NOT", TokenType.Not],

@@ -1,4 +1,5 @@
 import {
+  ArrayExpression,
   Expression,
   FunctionExpression,
   GroupedExpression,
@@ -291,6 +292,29 @@ describe("parser", () => {
           new Token(TokenType.Between, "BETWEEN", null, 1),
         ),
         new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("IN", () => {
+    parse("1 IN (1)", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.In, "IN", null, 1),
+        new ArrayExpression([new LiteralExpression(1)]),
+      ),
+    ]);
+  });
+
+  test("NOT IN", () => {
+    parse("1 NOT IN (1)", [
+      new LogicalExpression(
+        new LiteralExpression(1),
+        new UnaryToken(
+          new Token(TokenType.Not, "NOT", null, 1),
+          new Token(TokenType.In, "IN", null, 1),
+        ),
+        new ArrayExpression([new LiteralExpression(1)]),
       ),
     ]);
   });

@@ -280,4 +280,11 @@ describe("scanner", () => {
       new Token(TokenType.EOF, "", null, 1),
     ]);
   });
+
+  test("IN", () => {
+    scan("IN", [
+      new Token(TokenType.In, "IN", null, 1),
+      new Token(TokenType.EOF, "", null, 1),
+    ]);
+  });
 });

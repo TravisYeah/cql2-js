@@ -5,6 +5,7 @@ export interface Expression {
 }
 
 export interface ExpressionVisitor<T> {
+  visitArrayExpression(expr: ArrayExpression): T;
   visitUnaryToken(expr: UnaryToken): T;
   visitBooleanExpression(expr: BooleanExpression): T;
   visitBinaryExpression(expr: BinaryExpression): T;
@@ -147,5 +148,17 @@ export class GroupedExpression implements Expression {
 
   accept<T>(visitor: ExpressionVisitor<T>): T {
     return visitor.visitGroupedExpression(this);
+  }
+}
+
+export class ArrayExpression implements Expression {
+  expressions: Expression[];
+
+  constructor(expressions: Expression[]) {
+    this.expressions = expressions;
+  }
+
+  accept<T>(visitor: ExpressionVisitor<T>): T {
+    return visitor.visitArrayExpression(this);
   }
 }
