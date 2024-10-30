@@ -109,10 +109,15 @@ describe("scanner", () => {
   });
 
   test("String - unterminated string", () => {
-    const scanner = new Scanner("'test", logger);
+    let calledLogger = false;
+    function mockLogger(line: number, offset: number, message: string) {
+      calledLogger = true;
+    }
+    const scanner = new Scanner("'test", mockLogger);
     expect(() => scanner.scanTokens()).toThrow(
       new CqlSyntaxError("Unterminated string", 1),
     );
+    expect(calledLogger).toBeTruthy();
   });
 
   test("String - backslash escaped quote", () => {
