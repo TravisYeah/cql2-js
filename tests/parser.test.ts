@@ -1,5 +1,6 @@
 import {
   ArrayExpression,
+  BinaryExpression,
   Expression,
   FunctionExpression,
   GroupedExpression,
@@ -338,6 +339,202 @@ describe("parser", () => {
           new Token(TokenType.Not, "NOT", null, 1),
           new LiteralExpression(null),
         ),
+      ),
+    ]);
+  });
+
+  test("1+2", () => {
+    parse("1+2", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Plus, "+", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("1-2", () => {
+    parse("1-2", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Minus, "-", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("1*2", () => {
+    parse("1*2", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Star, "*", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("1/2", () => {
+    parse("1/2", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Slash, "/", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("1%2", () => {
+    parse("1%2", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Modulus, "%", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("1 DIV 2", () => {
+    parse("1 DIV 2", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Div, "DIV", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("1^2", () => {
+    parse("1^2", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Caret, "^", null, 1),
+        new LiteralExpression(2),
+      ),
+    ]);
+  });
+
+  test("1-2*3", () => {
+    parse("1-2*3", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Minus, "-", null, 1),
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Star, "*", null, 1),
+          new LiteralExpression(3),
+        ),
+      ),
+    ]);
+  });
+
+  test("1+2*3", () => {
+    parse("1+2*3", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Plus, "+", null, 1),
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Star, "*", null, 1),
+          new LiteralExpression(3),
+        ),
+      ),
+    ]);
+  });
+
+  test("1+2/3", () => {
+    parse("1+2/3", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Plus, "+", null, 1),
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Slash, "/", null, 1),
+          new LiteralExpression(3),
+        ),
+      ),
+    ]);
+  });
+
+  test("1+2%3", () => {
+    parse("1+2%3", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Plus, "+", null, 1),
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Modulus, "%", null, 1),
+          new LiteralExpression(3),
+        ),
+      ),
+    ]);
+  });
+
+  test("1+2 DIV 3", () => {
+    parse("1+2 DIV 3", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Plus, "+", null, 1),
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Div, "DIV", null, 1),
+          new LiteralExpression(3),
+        ),
+      ),
+    ]);
+  });
+
+  test("1+2 DIV 3", () => {
+    parse("1+2 DIV 3", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Plus, "+", null, 1),
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Div, "DIV", null, 1),
+          new LiteralExpression(3),
+        ),
+      ),
+    ]);
+  });
+
+  test("1+2^3", () => {
+    parse("1+2^3", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Plus, "+", null, 1),
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Caret, "^", null, 1),
+          new LiteralExpression(3),
+        ),
+      ),
+    ]);
+  });
+
+  test("1*2^3", () => {
+    parse("1*2^3", [
+      new BinaryExpression(
+        new LiteralExpression(1),
+        new Token(TokenType.Star, "*", null, 1),
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Caret, "^", null, 1),
+          new LiteralExpression(3),
+        ),
+      ),
+    ]);
+  });
+
+  test("1^2*3", () => {
+    parse("1^2*3", [
+      new BinaryExpression(
+        new BinaryExpression(
+          new LiteralExpression(1),
+          new Token(TokenType.Caret, "^", null, 1),
+          new LiteralExpression(2),
+        ),
+        new Token(TokenType.Star, "*", null, 1),
+        new LiteralExpression(3),
       ),
     ]);
   });

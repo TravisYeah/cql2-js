@@ -19,6 +19,7 @@ export class Scanner {
     ["FALSE", TokenType.False],
     ["NULL", TokenType.Null],
     ["IS", TokenType.Is],
+    ["DIV", TokenType.Div],
   ]);
 
   constructor(source: string, error: (line: number, message: string) => void) {

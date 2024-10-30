@@ -67,7 +67,7 @@ export class Parser {
   }
 
   private comparison(): Expression {
-    let expr = this.unary();
+    let expr = this.term();
 
     while (
       this.match(
@@ -94,13 +94,56 @@ export class Parser {
           );
         }
         const operator = this.previous();
-        const right = this.unary();
+        const right = this.term();
         expr = new BinaryExpression(expr, new UnaryToken(not, operator), right);
       } else {
         const operator = this.previous();
-        const right = this.unary();
+        const right = this.term();
         expr = new BinaryExpression(expr, operator, right);
       }
+    }
+
+    return expr;
+  }
+
+  private term(): Expression {
+    let expr = this.multiDiv();
+
+    while (this.match(TokenType.Plus, TokenType.Minus)) {
+      const operator = this.previous();
+      const right = this.multiDiv();
+      expr = new BinaryExpression(expr, operator, right);
+    }
+
+    return expr;
+  }
+
+  private multiDiv(): Expression {
+    let expr = this.powerTerm();
+
+    while (
+      this.match(
+        TokenType.Star,
+        TokenType.Slash,
+        TokenType.Modulus,
+        TokenType.Div,
+      )
+    ) {
+      const operator = this.previous();
+      const right = this.powerTerm();
+      expr = new BinaryExpression(expr, operator, right);
+    }
+
+    return expr;
+  }
+
+  private powerTerm(): Expression {
+    let expr = this.unary();
+
+    while (this.match(TokenType.Caret)) {
+      const operator = this.previous();
+      const right = this.unary();
+      expr = new BinaryExpression(expr, operator, right);
     }
 
     return expr;
