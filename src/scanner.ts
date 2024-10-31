@@ -79,10 +79,8 @@ export class Scanner {
       case "<":
         if (this.match("=")) {
           this.addToken(TokenType.LessEqual);
-          this.advance();
         } else if (this.match(">")) {
           this.addToken(TokenType.NotEqual);
-          this.advance();
         } else {
           this.addToken(TokenType.Less);
         }
