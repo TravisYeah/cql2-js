@@ -100,47 +100,46 @@ export class Parser {
             "Expected BETWEEN keyword after NOT keyword",
           );
         }
-
-        const left = this.term();
-        if (!this.match(TokenType.And)) {
-          throw this.error(
-            this.peek(),
-            "Expected AND keyword after BETWEEN keyword.",
-          );
-        }
-        const right = this.term();
-        expr = new BetweenExpression(expr, left, right);
-        expr = new UnaryExpression(not, expr);
+        return new UnaryExpression(not, this.between(expr));
       } else if (this.previous()?.tokenType === TokenType.Between) {
-        const left = this.term();
-        if (!this.match(TokenType.And)) {
-          throw this.error(
-            this.peek(),
-            "Expected AND keyword after BETWEEN keyword.",
-          );
-        }
-        const right = this.term();
-        expr = new BetweenExpression(expr, left, right);
-      } else if (this.previous()?.tokenType === TokenType.Not) {
-        const not = this.previous();
-
-        if (!this.match(TokenType.Like, TokenType.Between, TokenType.In)) {
-          throw this.error(
-            this.peek(),
-            "Expected LIKE, BETWEEN, or IN keyword after NOT keyword",
-          );
-        }
-        const operator = this.previous();
-        const right = this.term();
-        expr = new BinaryExpression(expr, new UnaryToken(not, operator), right);
+        return this.between(expr);
       } else {
-        const operator = this.previous();
-        const right = this.term();
-        expr = new BinaryExpression(expr, operator, right);
+        return this.binaryComparison(expr);
       }
     }
 
     return expr;
+  }
+
+  private binaryComparison(expr: Expression): Expression {
+    if (this.previous()?.tokenType === TokenType.Not) {
+      const not = this.previous();
+      if (!this.match(TokenType.Like, TokenType.In)) {
+        throw this.error(
+          this.peek(),
+          "Expected LIKE or IN keyword after NOT keyword",
+        );
+      }
+      const operator = this.previous();
+      const right = this.term();
+      return new BinaryExpression(expr, new UnaryToken(not, operator), right);
+    } else {
+      const operator = this.previous();
+      const right = this.term();
+      return new BinaryExpression(expr, operator, right);
+    }
+  }
+
+  private between(expr: Expression): Expression {
+    const left = this.term();
+    if (!this.match(TokenType.And)) {
+      throw this.error(
+        this.peek(),
+        "Expected AND keyword after BETWEEN keyword.",
+      );
+    }
+    const right = this.term();
+    return new BetweenExpression(expr, left, right);
   }
 
   private term(): Expression {
