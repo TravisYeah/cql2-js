@@ -7,7 +7,6 @@ export interface Expression {
 export interface ExpressionVisitor<T> {
   visitArrayExpression(expr: ArrayExpression): T;
   visitUnaryToken(expr: UnaryToken): T;
-  visitBooleanExpression(expr: BooleanExpression): T;
   visitBinaryExpression(expr: BinaryExpression): T;
   visitLogicalExpression(expr: LogicalExpression): T;
   visitLiteralExpression(expr: LiteralExpression): T;
@@ -16,22 +15,6 @@ export interface ExpressionVisitor<T> {
   visitFunctionExpression(expr: FunctionExpression): T;
   visitGroupedExpression(expr: GroupedExpression): T;
   visitBetweenExpression(expr: BetweenExpression): T;
-}
-
-export class BooleanExpression implements Expression {
-  left: Expression;
-  operator: Token;
-  right: Expression;
-
-  constructor(left: Expression, operator: Token, right: Expression) {
-    this.left = left;
-    this.operator = operator;
-    this.right = right;
-  }
-
-  accept<T>(visitor: ExpressionVisitor<T>): T {
-    return visitor.visitBooleanExpression(this);
-  }
 }
 
 export class PropertyNameExpression implements Expression {
