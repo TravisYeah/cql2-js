@@ -15,6 +15,7 @@ export interface ExpressionVisitor<T> {
   visitPropertyNameExpression(expr: PropertyNameExpression): T;
   visitFunctionExpression(expr: FunctionExpression): T;
   visitGroupedExpression(expr: GroupedExpression): T;
+  visitBetweenExpression(expr: BetweenExpression): T;
 }
 
 export class BooleanExpression implements Expression {
@@ -160,5 +161,21 @@ export class ArrayExpression implements Expression {
 
   accept<T>(visitor: ExpressionVisitor<T>): T {
     return visitor.visitArrayExpression(this);
+  }
+}
+
+export class BetweenExpression implements Expression {
+  operand: Expression;
+  left: Expression;
+  right: Expression;
+
+  constructor(operand: Expression, left: Expression, right: Expression) {
+    this.operand = operand;
+    this.left = left;
+    this.right = right;
+  }
+
+  accept<T>(visitor: ExpressionVisitor<T>): T {
+    return visitor.visitBetweenExpression(this);
   }
 }

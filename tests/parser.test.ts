@@ -1,5 +1,6 @@
 import {
   ArrayExpression,
+  BetweenExpression,
   BinaryExpression,
   Expression,
   FunctionExpression,
@@ -221,10 +222,10 @@ describe("parser", () => {
   });
 
   test("=", () => {
-    parse("1 > 2", [
+    parse("1 = 2", [
       new LogicalExpression(
         new LiteralExpression(1),
-        new Token(TokenType.Greater, ">", null, 1),
+        new Token(TokenType.Equal, "=", null, 1),
         new LiteralExpression(2),
       ),
     ]);
@@ -304,24 +305,24 @@ describe("parser", () => {
   });
 
   test("BETWEEN", () => {
-    parse("1 BETWEEN 2", [
-      new LogicalExpression(
-        new LiteralExpression(1),
-        new Token(TokenType.Between, "BETWEEN", null, 1),
+    parse("2 BETWEEN 1 AND 3", [
+      new BetweenExpression(
         new LiteralExpression(2),
+        new LiteralExpression(1),
+        new LiteralExpression(3),
       ),
     ]);
   });
 
   test("NOT BETWEEN ", () => {
-    parse("1 NOT BETWEEN 2", [
-      new LogicalExpression(
-        new LiteralExpression(1),
-        new UnaryToken(
-          new Token(TokenType.Not, "NOT", null, 1),
-          new Token(TokenType.Between, "BETWEEN", null, 1),
+    parse("1 NOT BETWEEN 2 AND 3", [
+      new UnaryExpression(
+        new Token(TokenType.Not, "NOT", null, 1),
+        new BetweenExpression(
+          new LiteralExpression(1),
+          new LiteralExpression(2),
+          new LiteralExpression(3),
         ),
-        new LiteralExpression(2),
       ),
     ]);
   });

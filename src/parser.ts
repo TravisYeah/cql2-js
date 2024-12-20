@@ -1,5 +1,6 @@
 import {
   ArrayExpression,
+  BetweenExpression,
   BinaryExpression,
   Expression,
   FunctionExpression,
@@ -88,7 +89,39 @@ export class Parser {
         TokenType.Is,
       )
     ) {
-      if (this.previous()?.tokenType === TokenType.Not) {
+      if (
+        this.previous()?.tokenType === TokenType.Not &&
+        this.peek().tokenType === TokenType.Between
+      ) {
+        const not = this.previous();
+        if (!this.match(TokenType.Between)) {
+          throw this.error(
+            this.peek(),
+            "Expected BETWEEN keyword after NOT keyword",
+          );
+        }
+
+        const left = this.term();
+        if (!this.match(TokenType.And)) {
+          throw this.error(
+            this.peek(),
+            "Expected AND keyword after BETWEEN keyword.",
+          );
+        }
+        const right = this.term();
+        expr = new BetweenExpression(expr, left, right);
+        expr = new UnaryExpression(not, expr);
+      } else if (this.previous()?.tokenType === TokenType.Between) {
+        const left = this.term();
+        if (!this.match(TokenType.And)) {
+          throw this.error(
+            this.peek(),
+            "Expected AND keyword after BETWEEN keyword.",
+          );
+        }
+        const right = this.term();
+        expr = new BetweenExpression(expr, left, right);
+      } else if (this.previous()?.tokenType === TokenType.Not) {
         const not = this.previous();
 
         if (!this.match(TokenType.Like, TokenType.Between, TokenType.In)) {
