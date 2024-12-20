@@ -4,10 +4,10 @@
   "author": "Travis Harrison",
   "license": "MIT",
   "source": "src/index.ts",
-  "main": "dist/main.js",
-  "types": "dist/types.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc index.ts",
+    "build": "tsc && rollup --config",
     "test": "jest --watch",
     "prepare": "husky install"
   },
@@ -15,10 +15,14 @@
     "@babel/core": "^7.25.8",
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-typescript": "^7.25.7",
+    "@rollup/plugin-typescript": "^12.1.2",
     "babel-jest": "^29.7.0",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "rollup": "^4.29.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "tslib": "^2.8.1"
   },
   "dependencies": {
     "@types/jest": "^29.5.13"
