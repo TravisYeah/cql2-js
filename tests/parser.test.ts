@@ -11,11 +11,12 @@ import {
   UnaryToken,
 } from "../src/ast";
 import { Parser } from "../src/parser";
+import { Loc } from "../src/reporter";
 import { Scanner } from "../src/scanner";
 import { Token, TokenType } from "../src/token";
 
-function logger(line: number, offset: number, message: string) {
-  console.log(line, offset, message);
+function logger(message: string, loc: Loc) {
+  console.log(loc.row, loc.col, message);
 }
 
 function reporter(message: Error) {
