@@ -31,7 +31,11 @@ export class Parser {
       try {
         exressions.push(this.booleanExpression());
       } catch (error) {
-        this.report(error);
+        this.report(
+          error instanceof Error
+            ? error
+            : new Error(`Error while parsing: ${JSON.stringify(error)}`),
+        );
         this.synchronize();
       }
     }
