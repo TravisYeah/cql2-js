@@ -218,12 +218,23 @@ export class Parser {
           TokenType.LeftParen,
           "Expected '(' before grouped expression",
         );
-        const expr = this.primary();
+        const items = [this.term()];
+        let isArray = false;
+        while (this.match(TokenType.Comma)) {
+          isArray = true;
+          if (this.peek().tokenType === TokenType.RightParen) {
+            break;
+          }
+          items.push(this.term());
+        }
         this.consume(
           TokenType.RightParen,
           "Expected ')' after grouped expression",
         );
-        return new GroupedExpression(expr);
+        if (isArray) {
+          return new ArrayExpression(items);
+        }
+        return new GroupedExpression(items[0]);
       }
     }
 
@@ -240,9 +251,9 @@ export class Parser {
       return new ArrayExpression(items);
     }
 
-    items.push(this.primary());
+    items.push(this.term());
     while (this.match(TokenType.Comma)) {
-      items.push(this.primary());
+      items.push(this.term());
     }
 
     this.consume(TokenType.RightParen, "Expected ')' after array");
@@ -271,9 +282,9 @@ export class Parser {
       return new FunctionExpression(identifier, args);
     }
 
-    args.push(this.primary());
+    args.push(this.term());
     while (this.match(TokenType.Comma)) {
-      args.push(this.primary());
+      args.push(this.term());
     }
 
     this.consume(TokenType.RightParen, "Expected ')'");

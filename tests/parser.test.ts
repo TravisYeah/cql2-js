@@ -94,6 +94,58 @@ describe("parser", () => {
     ]);
   });
 
+  test("function - arg property", () => {
+    parse("test(prop)", [
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new PropertyNameExpression(
+          new Token(TokenType.Identifier, "prop", null, 1),
+        ),
+      ]),
+    ]);
+  });
+
+  test("function - arg negative number", () => {
+    parse("test(-1)", [
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new UnaryExpression(
+          new Token(TokenType.Minus, "-", null, 1),
+          new LiteralExpression(1),
+        ),
+      ]),
+    ]);
+  });
+
+  test("function - arg power term", () => {
+    parse("test(2^3)", [
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new BinaryExpression(
+          new LiteralExpression(2),
+          new Token(TokenType.Caret, "^", null, 1),
+          new LiteralExpression(3),
+        ),
+      ]),
+    ]);
+  });
+
+  test("function - arg one item array", () => {
+    parse("test((1,))", [
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new ArrayExpression([new LiteralExpression(1)]),
+      ]),
+    ]);
+  });
+
+  test("function - arg two item array", () => {
+    parse("test((1,2))", [
+      new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
+        new ArrayExpression([
+          new LiteralExpression(1),
+          new LiteralExpression(2),
+        ]),
+      ]),
+    ]);
+  });
+
   test("function - 2 args", () => {
     parse("test(1, 2)", [
       new FunctionExpression(new Token(TokenType.Identifier, "test", null, 1), [
