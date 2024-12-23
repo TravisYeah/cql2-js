@@ -620,4 +620,76 @@ describe("parser", () => {
       ),
     ]);
   });
+
+  test("test=", () => {
+    parse("test=", [
+      new BinaryExpression(
+        new PropertyNameExpression(
+          new Token(TokenType.Identifier, "test", null, 1),
+        ),
+        new Token(TokenType.Equal, "=", null, 1),
+        new LiteralExpression(""),
+      ),
+    ]);
+  });
+
+  test("test<>", () => {
+    parse("test<>", [
+      new BinaryExpression(
+        new PropertyNameExpression(
+          new Token(TokenType.Identifier, "test", null, 1),
+        ),
+        new Token(TokenType.NotEqual, "<>", null, 1),
+        new LiteralExpression(""),
+      ),
+    ]);
+  });
+
+  test("test>", () => {
+    parse("test>", [
+      new BinaryExpression(
+        new PropertyNameExpression(
+          new Token(TokenType.Identifier, "test", null, 1),
+        ),
+        new Token(TokenType.Greater, ">", null, 1),
+        new LiteralExpression(0),
+      ),
+    ]);
+  });
+
+  test("test>=", () => {
+    parse("test>=", [
+      new BinaryExpression(
+        new PropertyNameExpression(
+          new Token(TokenType.Identifier, "test", null, 1),
+        ),
+        new Token(TokenType.GreaterEqual, ">=", null, 1),
+        new LiteralExpression(0),
+      ),
+    ]);
+  });
+
+  test("test<", () => {
+    parse("test<", [
+      new BinaryExpression(
+        new PropertyNameExpression(
+          new Token(TokenType.Identifier, "test", null, 1),
+        ),
+        new Token(TokenType.Less, "<", null, 1),
+        new LiteralExpression(0),
+      ),
+    ]);
+  });
+
+  test("test<=", () => {
+    parse("test<=", [
+      new BinaryExpression(
+        new PropertyNameExpression(
+          new Token(TokenType.Identifier, "test", null, 1),
+        ),
+        new Token(TokenType.LessEqual, "<=", null, 1),
+        new LiteralExpression(0),
+      ),
+    ]);
+  });
 });

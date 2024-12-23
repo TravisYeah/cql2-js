@@ -238,6 +238,23 @@ export class Parser {
       }
     }
 
+    if (
+      [TokenType.Equal, TokenType.NotEqual].includes(this.previous()?.tokenType)
+    ) {
+      return new LiteralExpression("");
+    }
+
+    if (
+      [
+        TokenType.Greater,
+        TokenType.GreaterEqual,
+        TokenType.Less,
+        TokenType.LessEqual,
+      ].includes(this.previous()?.tokenType)
+    ) {
+      return new LiteralExpression(0);
+    }
+
     throw this.error(
       this.peek(),
       `Expected expression but received ${this.peek()}`,
@@ -375,8 +392,13 @@ export class Parser {
     this.advance();
 
     while (!this.isAtEnd()) {
-      if (RECOVERY_TOKENS.includes(this.previous().tokenType)) {
+      const prev = this.previous().tokenType;
+      if (RECOVERY_TOKENS.includes(prev)) {
         return;
+      }
+
+      if (prev === TokenType.Equal) {
+        return new LiteralExpression("");
       }
 
       this.advance();
