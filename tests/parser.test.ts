@@ -11,6 +11,7 @@ import {
   UnaryExpression,
   UnaryToken,
 } from "../src/ast";
+import { CqlSyntaxError } from "../src/exceptions";
 import { Parser } from "../src/parser";
 import { Loc } from "../src/reporter";
 import { Scanner } from "../src/scanner";
@@ -20,16 +21,18 @@ function logger(message: string, loc: Loc) {
   console.log(loc.row, loc.col, message);
 }
 
-function reporter(message: Error) {
-  console.error(message);
-}
-
 function parse(input: string, output: Expression[]) {
+  const errors: Error[] = [];
+  function reporter(err: Error) {
+    errors.push(err);
+  }
+
   const scanner = new Scanner(input, logger);
   const tokens = scanner.scanTokens();
   const parser = new Parser(tokens, reporter);
   const expressions = parser.parse();
   expect(expressions).toEqual(output);
+  return errors;
 }
 
 describe("parser", () => {
@@ -622,7 +625,7 @@ describe("parser", () => {
   });
 
   test("test=", () => {
-    parse("test=", [
+    const errors = parse("test=", [
       new BinaryExpression(
         new PropertyNameExpression(
           new Token(TokenType.Identifier, "test", null, 1),
@@ -631,10 +634,20 @@ describe("parser", () => {
         new LiteralExpression(""),
       ),
     ]);
+
+    expect(errors).toHaveLength(1);
+    const error = errors[0];
+    expect(error).toBeInstanceOf(CqlSyntaxError);
+    if (error instanceof CqlSyntaxError) {
+      expect(error.line).toEqual(1);
+      expect(error.message).toEqual(
+        `Expected expression but received ${new Token(TokenType.EOF, "", null, 1)}`,
+      );
+    }
   });
 
   test("test<>", () => {
-    parse("test<>", [
+    const errors = parse("test<>", [
       new BinaryExpression(
         new PropertyNameExpression(
           new Token(TokenType.Identifier, "test", null, 1),
@@ -643,10 +656,20 @@ describe("parser", () => {
         new LiteralExpression(""),
       ),
     ]);
+
+    expect(errors).toHaveLength(1);
+    const error = errors[0];
+    expect(error).toBeInstanceOf(CqlSyntaxError);
+    if (error instanceof CqlSyntaxError) {
+      expect(error.line).toEqual(1);
+      expect(error.message).toEqual(
+        `Expected expression but received ${new Token(TokenType.EOF, "", null, 1)}`,
+      );
+    }
   });
 
   test("test>", () => {
-    parse("test>", [
+    const errors = parse("test>", [
       new BinaryExpression(
         new PropertyNameExpression(
           new Token(TokenType.Identifier, "test", null, 1),
@@ -655,10 +678,20 @@ describe("parser", () => {
         new LiteralExpression(0),
       ),
     ]);
+
+    expect(errors).toHaveLength(1);
+    const error = errors[0];
+    expect(error).toBeInstanceOf(CqlSyntaxError);
+    if (error instanceof CqlSyntaxError) {
+      expect(error.line).toEqual(1);
+      expect(error.message).toEqual(
+        `Expected expression but received ${new Token(TokenType.EOF, "", null, 1)}`,
+      );
+    }
   });
 
   test("test>=", () => {
-    parse("test>=", [
+    const errors = parse("test>=", [
       new BinaryExpression(
         new PropertyNameExpression(
           new Token(TokenType.Identifier, "test", null, 1),
@@ -667,10 +700,20 @@ describe("parser", () => {
         new LiteralExpression(0),
       ),
     ]);
+
+    expect(errors).toHaveLength(1);
+    const error = errors[0];
+    expect(error).toBeInstanceOf(CqlSyntaxError);
+    if (error instanceof CqlSyntaxError) {
+      expect(error.line).toEqual(1);
+      expect(error.message).toEqual(
+        `Expected expression but received ${new Token(TokenType.EOF, "", null, 1)}`,
+      );
+    }
   });
 
   test("test<", () => {
-    parse("test<", [
+    const errors = parse("test<", [
       new BinaryExpression(
         new PropertyNameExpression(
           new Token(TokenType.Identifier, "test", null, 1),
@@ -679,10 +722,20 @@ describe("parser", () => {
         new LiteralExpression(0),
       ),
     ]);
+
+    expect(errors).toHaveLength(1);
+    const error = errors[0];
+    expect(error).toBeInstanceOf(CqlSyntaxError);
+    if (error instanceof CqlSyntaxError) {
+      expect(error.line).toEqual(1);
+      expect(error.message).toEqual(
+        `Expected expression but received ${new Token(TokenType.EOF, "", null, 1)}`,
+      );
+    }
   });
 
   test("test<=", () => {
-    parse("test<=", [
+    const errors = parse("test<=", [
       new BinaryExpression(
         new PropertyNameExpression(
           new Token(TokenType.Identifier, "test", null, 1),
@@ -691,5 +744,15 @@ describe("parser", () => {
         new LiteralExpression(0),
       ),
     ]);
+
+    expect(errors).toHaveLength(1);
+    const error = errors[0];
+    expect(error).toBeInstanceOf(CqlSyntaxError);
+    if (error instanceof CqlSyntaxError) {
+      expect(error.line).toEqual(1);
+      expect(error.message).toEqual(
+        `Expected expression but received ${new Token(TokenType.EOF, "", null, 1)}`,
+      );
+    }
   });
 });

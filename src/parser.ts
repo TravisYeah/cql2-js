@@ -20,13 +20,16 @@ export class Parser {
   private tokens: Token[];
   private current = 0;
   private report: (message: Error) => void;
+  private errors: Error[];
 
   constructor(tokens: Token[], error: (message: Error) => void) {
     this.tokens = tokens;
     this.report = error;
+    this.errors = [];
   }
 
   parse(): Expression[] {
+    this.errors = [];
     const exressions: Expression[] = [];
     while (!this.isAtEnd()) {
       try {
@@ -40,6 +43,7 @@ export class Parser {
         this.synchronize();
       }
     }
+    this.errors.forEach((err) => this.report(err));
     return exressions;
   }
 
@@ -241,6 +245,12 @@ export class Parser {
     if (
       [TokenType.Equal, TokenType.NotEqual].includes(this.previous()?.tokenType)
     ) {
+      this.errors.push(
+        this.error(
+          this.peek(),
+          `Expected expression but received ${this.peek()}`,
+        ),
+      );
       return new LiteralExpression("");
     }
 
@@ -252,6 +262,12 @@ export class Parser {
         TokenType.LessEqual,
       ].includes(this.previous()?.tokenType)
     ) {
+      this.errors.push(
+        this.error(
+          this.peek(),
+          `Expected expression but received ${this.peek()}`,
+        ),
+      );
       return new LiteralExpression(0);
     }
 
